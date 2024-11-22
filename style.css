@@ -1,0 +1,21 @@
+.full {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-only p {
+    max-width: 75rem;
+}
+
+.visualization {
+    width: 80vw;
+    height: 80vh;
+    background-color: gray;
+}
+
+.temptitle {
+    align-self: center;
+}
