@@ -7,31 +7,61 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="full text-only">
+    <div class="full text-only" data-step="1">
         <h1>Title Goes Here</h1>
         <p>Scroll down to see more</p>
     </div>
-    <div class="full text-only">
+    <div class="full text-only" data-step="2">
         <h2>Intro Header Goes Here</h2>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum obcaecati tempora possimus temporibus, odit, minus labore et animi, facere consequatur laboriosam error quae explicabo minima at impedit. Debitis quo excepturi facilis ratione sit unde possimus culpa autem molestias? Nihil, soluta deserunt! Voluptatem sapiente saepe maxime beatae! Alias temporibus itaque aspernatur.</p>
     </div>
-    <div class="full">
-        <div id="vis1Container" class="visualization"></div>
-        <h3 class="temptitle">Vis 1</h3>
+    <div>
+        <div class="full vis-container">
+            <div id="vis1Container" class="visualization"></div>
+            <h3 class="temptitle">Vis 1</h3>
+        </div>
+        <div class="full" data-step="3">
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+        </div>
+        <div class="full" data-step="4">
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+        </div>
     </div>
-    <div class="full">
-        <div id="vis2Container" class="visualization"></div>
-        <h3 class="temptitle">Vis 2</h3>
+    <div>
+        <div class="full vis-container">
+            <div id="vis2Container" class="visualization"></div>
+            <h3 class="temptitle">Vis 2</h3>
+        </div>
+        <div class="full" data-step="5">
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+        </div>
+        <div class="full" data-step="6">
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+        </div>
     </div>
-    <div class="full">
-        <div id="vis3Container" class="visualization"></div>
-        <h3 class="temptitle">Vis 3</h3>
+    <div>
+        <div class="full vis-container">
+            <div id="vis3Container" class="visualization"></div>
+            <h3 class="temptitle">Vis 3</h3>
+        </div>
+        <div class="full" data-step="7">
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+        </div>
+        <div class="full" data-step="8">
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+            <div class="text-box">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, aliquam placeat ab culpa rerum odit.</div>
+        </div>
     </div>
-    <div class="full text-only">
+    <div class="full text-only" data-step="9">
         <h2>Concluding Header Goes Here</h2>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum obcaecati tempora possimus temporibus, odit, minus labore et animi, facere consequatur laboriosam error quae explicabo minima at impedit. Debitis quo excepturi facilis ratione sit unde possimus culpa autem molestias? Nihil, soluta deserunt! Voluptatem sapiente saepe maxime beatae! Alias temporibus itaque aspernatur.</p>
     </div>
-    <div class="full text-only">
+    <div class="full text-only" data-step="10">
         <h2>Credits</h2>
         <ul>
             <li>
@@ -48,6 +78,11 @@
             </li>
         </ul>
     </div>
+    <div class="mobile-buttons">
+      <button id="prev-step">Previous</button>
+      <button id="next-step">Next</button>
+    </div>
+    <script type="module" src="scroll.js"></script>
     <script type="module" src="visualization.js"></script>
 </body>
 </html>
