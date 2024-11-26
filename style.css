@@ -1,52 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap");
+
+* {
+  font-family: "Figtree", sans-serif;
+  margin: 0;
+}
+
 body {
-    scroll-behavior: smooth;
-    overflow: hidden;
+  scroll-behavior: smooth;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .full {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .vis-container {
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .text-box {
-    z-index: 10;
+  z-index: 10;
+  background-color: #d8d6d6;
+  padding: 1rem;
+  width: 20rem;
 }
 
 .text-only p {
-    max-width: 75rem;
+  max-width: 75rem;
 }
 
 .visualization {
-    width: 80vw;
-    height: 80vh;
-    background-color: gray;
+  width: 80vw;
+  height: 80vh;
+  background-color: gray;
 }
 
 .temptitle {
-    align-self: center;
+  align-self: center;
 }
 
 .mobile-buttons {
-    position: fixed;
-    bottom: 1rem;
-    left: calc(50% - 45%);
-    display: flex;
-    width: 90%;
-    justify-content: space-between;
+  position: fixed;
+  bottom: 1rem;
+  left: calc(50% - 45%);
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
 }
 
 @media (min-width: 64rem) {
-    .mobile-buttons {
-        display: none;
-    }
+  .mobile-buttons {
+    display: none;
+  }
+}
+
+/* TYPE */
+
+h1 {
+  font-size: 4rem;
+  margin-bottom: 3rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+h3, .vis-title {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+p {
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+.vis-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+.vis-small {
+    font-size: 0.8rem;
+    margin-top: 1rem;
+    font-weight: 400;
+}
+
+/* VISUALIZATION 1 STYLING */
+
+.vis-container.visualization1 {
+  align-items: unset;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.v1 .text-box:first-child {
+  position: relative;
+  top: -9rem;
+  left: 20rem;
+}
+
+.v1 .text-box:last-child {
+  position: relative;
+  bottom: -5rem;
+  left: 30rem;
 }
