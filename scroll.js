@@ -7,6 +7,9 @@ const scrollToStep = (index) => {
     steps[index].scrollIntoView({ behavior: 'smooth' });
     currentStep = index;
   }
+  // implement it to go back to original
+  // if (index < 3)
+  if (index >= 3) redrawVis1();
 };
 
 // Handle scroll for desktop

@@ -78,7 +78,8 @@ h2 {
   font-weight: 700;
 }
 
-h3, .vis-title {
+h3,
+.vis-title {
   font-size: 1.75rem;
   margin-bottom: 0.5rem;
   font-weight: 700;
@@ -90,15 +91,15 @@ p {
 }
 
 .vis-subtitle {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    font-weight: 400;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 400;
 }
 
 .vis-small {
-    font-size: 0.8rem;
-    margin-top: 1rem;
-    font-weight: 400;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  font-weight: 400;
 }
 
 /* VISUALIZATION 1 STYLING */
@@ -109,13 +110,25 @@ p {
   margin-left: auto;
 }
 
-.v1 .text-box:first-child {
+.s3 .text-box:first-child {
   position: relative;
   top: -9rem;
   left: 20rem;
 }
 
-.v1 .text-box:last-child {
+.s3 .text-box:last-child {
+  position: relative;
+  bottom: -5rem;
+  left: 30rem;
+}
+
+.s4 .text-box:first-child {
+  position: relative;
+  top: -9rem;
+  left: 20rem;
+}
+
+.s4 .text-box:last-child {
   position: relative;
   bottom: -5rem;
   left: 30rem;
