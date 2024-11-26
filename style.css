@@ -29,7 +29,8 @@ body {
 .visualization {
     width: 80vw;
     height: 80vh;
-    background-color: gray;
+    background-color: rgb(223, 223, 223);
+    border-radius: 1rem;
 }
 
 .temptitle {
