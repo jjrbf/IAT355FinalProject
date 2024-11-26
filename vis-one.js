@@ -1,12 +1,10 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-
 (async function runApp() {
     const config = {
       width: 900,
       height: 400,
       margin: { top: 40, right: 200, bottom: 40, left: 200 },
       dataPathUniversities:
-        "./datasets/bc_universities_2022_23 - university_stats_2023_24.csv",
+        "datasets/bc_universities_2022_23_tuition.csv",
       svgSelector: "#vis1Container",
     };
   
@@ -29,11 +27,11 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
     .map((d) => ({
       ...d,
       tuitionPerStudent:
-        parseFloat(d["2022/23 Tuition For Each Student"].replace(/,/g, "")) || 0,
+        parseFloat(d["tuitionPerStudent"]) || 0,
       totalStudents:
-        parseFloat(d["2022/23 Total Students"].replace(/,/g, "")) || 0,
+        parseFloat(d["totalStudents"]) || 0,
       tuitionFees:
-        parseFloat(d["2022/23 Tuition Fees"].replace(/,/g, "")) || 0,
+        parseFloat(d["tuition"]) || 0,
     }))
     .map((d) => ({
       ...d,
