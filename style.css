@@ -147,3 +147,21 @@ p {
   top: -11rem;
   left: 20rem;
 }
+
+
+/* VISUALIZATION 4 STYLING */
+
+.vis-container.visualization4 {
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4rem;
+}
+
+.s7 .text-box {
+  position: relative;
+  top: -11rem;
+  left: 30rem;
+}
