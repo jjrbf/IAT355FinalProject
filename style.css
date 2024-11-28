@@ -133,3 +133,11 @@ p {
   bottom: -5rem;
   left: 30rem;
 }
+
+/* VISUALIZATION 2 STYLING */
+
+.vis-container.visualization2 {
+  align-items: unset;
+  margin-right: auto;
+  margin-left: auto;
+}
