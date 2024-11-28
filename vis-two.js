@@ -2,12 +2,10 @@
     const config = {
       width: 900,
       height: 400,
-      margin: { top: 40, right: 200, bottom: 40, left: 200 },
+      margin: { top: 40, right: 50, bottom: 70, left: 100 },
       dataPathUniversities: "datasets/bc_universities_2022_23_tuition.csv",
       dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
       svgSelector: "#vis2Container",
-      tuitionButtonId: "vis2tuition",
-      salaryButtonId: "vis2salary",
     };
   
     const { width, height, margin } = config;
@@ -18,10 +16,7 @@
       d3.autoType
     );
   
-    const datasetSalaries = await d3.csv(
-      config.dataPathSalaries,
-      d3.autoType
-    );
+    const datasetSalaries = await d3.csv(config.dataPathSalaries, d3.autoType);
   
     const universities = [
       "University of British Columbia (UBC)",
@@ -36,21 +31,13 @@
       "University of the Fraser Valley",
     ];
   
-    // Preprocess university data
     const filteredDataUniversities = datasetUniversities
       .filter((d) => universities.includes(d.Institutions))
       .map((d) => ({
         ...d,
         tuitionPerStudent: parseFloat(d["tuitionPerStudent"]) || 0,
-        totalStudents: parseFloat(d["totalStudents"]) || 0,
-        tuitionFees: parseFloat(d["tuition"]) || 0,
-      }))
-      .map((d) => ({
-        ...d,
-        totalRevenue: d.totalStudents * d.tuitionFees, // Calculate total revenue
       }));
   
-    // Preprocess salary data
     const filteredDataSalaries = datasetSalaries
       .filter((d) => universities.includes(d.Agency))
       .map((d) => ({
@@ -58,7 +45,6 @@
         salary: parseFloat(d["Remuneration"]) || 0,
       }));
   
-    // Group salaries by university and calculate average
     const avgSalaries = universities.map((uni) => {
       const uniSalaries = filteredDataSalaries
         .filter((d) => d.Agency === uni)
@@ -66,11 +52,9 @@
   
       return {
         Institution: uni,
-        avgSalary: d3.mean(uniSalaries) || 0, // Calculate average salary
+        avgSalary: d3.mean(uniSalaries) || 0,
       };
     });
-  
-    // DRAWING
   
     const svg = d3
       .select(config.svgSelector)
@@ -80,122 +64,171 @@
       .style("border", "1px solid black");
   
     const xScale = d3
-      .scaleLinear()
-      .range([margin.left, width - margin.right]);
-  
-    const yScale = d3
       .scaleBand()
       .domain(universities)
-      .range([margin.top, height - margin.bottom])
+      .range([margin.left, width - margin.right])
       .padding(0.5);
   
-    function drawTuitionChart() {
-      // Clear existing elements
-      svg.selectAll("*").remove();
+    const yScale = d3.scaleLinear().range([height - margin.bottom, margin.top]);
   
-      // Update scales
-      xScale.domain([0, d3.max(filteredDataUniversities, (d) => d.tuitionPerStudent)]);
+    svg
+      .append("g")
+      .attr("class", "y-axis")
+      .attr("transform", `translate(${margin.left}, 0)`);
   
-      // Bars
+    svg
+      .append("g")
+      .attr("class", "x-axis")
+      .attr("transform", `translate(0, ${height - margin.bottom})`);
+  
+    function transitionBars(data, key, yScale) {
       svg
         .selectAll("rect")
-        .data(filteredDataUniversities)
+        .data(data)
         .join("rect")
-        .attr("x", xScale(0))
-        .attr("y", (d) => yScale(d.Institutions))
-        .attr("width", (d) => xScale(d.tuitionPerStudent) - xScale(0))
-        .attr("height", yScale.bandwidth())
+        .transition()
+        .duration(750)
+        .attr("x", (d) => xScale(d.Institutions || d.Institution))
+        .attr("y", (d) => yScale(d[key]))
+        .attr("width", xScale.bandwidth())
+        .attr("height", (d) => height - margin.bottom - yScale(d[key]))
         .attr("fill", (d) =>
-          d.Institutions === "University of British Columbia (UBC)"
-            ? "steelblue" // Highlight UBC
-            : "grey"
-        );
-  
-      // Labels
-      svg
-        .selectAll(".label")
-        .data(filteredDataUniversities)
-        .join("text")
-        .attr("class", "label")
-        .attr("x", (d) => xScale(d.tuitionPerStudent) + 5)
-        .attr("y", (d) => yScale(d.Institutions) + yScale.bandwidth() / 2)
-        .attr("dy", "0.35em")
-        .text(
-          (d) =>
-            `${d3.format("$,.0f")(d.totalRevenue)}`
-        )
-        .attr("fill", "black")
-        .attr("font-size", "12px");
-  
-      // Axes
-      svg
-        .append("g")
-        .call(d3.axisBottom(xScale).ticks(10, "s"))
-        .attr("transform", `translate(0, ${height - margin.bottom})`);
-  
-      svg
-        .append("g")
-        .call(d3.axisLeft(yScale))
-        .attr("transform", `translate(${margin.left}, 0)`);
-  
-        document.getElementById("vis2title").innerHTML = "Approx. Income from Student Tuition";
-        document.getElementById("vis2subtitle").innerHTML = "Across all of BC's post-secondary institutions with publicly available data";
-    }
-  
-    function drawSalaryChart() {
-      // Clear existing elements
-      svg.selectAll("*").remove();
-  
-      // Update scales
-      xScale.domain([0, d3.max(avgSalaries, (d) => d.avgSalary)]);
-  
-      // Bars
-      svg
-        .selectAll("rect")
-        .data(avgSalaries)
-        .join("rect")
-        .attr("x", xScale(0))
-        .attr("y", (d) => yScale(d.Institution))
-        .attr("width", (d) => xScale(d.avgSalary) - xScale(0))
-        .attr("height", yScale.bandwidth())
-        .attr("fill", (d) =>
-          d.Institution === "University of British Columbia (UBC)"
+          (d.Institutions || d.Institution) ===
+          "University of British Columbia (UBC)"
             ? "steelblue"
             : "grey"
         );
+    }
   
-      // Labels
+    function addHoverEffect(data, key, ubcValue) {
+      svg
+        .selectAll("rect")
+        .on("mouseover", function (event, d) {
+          svg.selectAll(".label").style("opacity", 0); // Hide all labels
+          d3.select(this).attr("fill", "orange"); // Highlight the hovered bar
+  
+          const difference = d[key] - ubcValue;
+  
+          svg
+            .append("text")
+            .attr("class", "hover-label")
+            .attr("x", xScale(d.Institutions || d.Institution) + xScale.bandwidth() / 2)
+            .attr("y", yScale(d[key]) - 10)
+            .attr("text-anchor", "middle")
+            .text(d3.format("+,.2s")(difference))
+            .attr("fill", "black")
+            .attr("font-size", "12px");
+        })
+        .on("mouseout", function () {
+          svg.selectAll(".label").style("opacity", 1); // Restore all labels
+          d3.select(this).attr("fill", (d) =>
+            (d.Institutions || d.Institution) ===
+            "University of British Columbia (UBC)"
+              ? "steelblue"
+              : "grey"
+          );
+          svg.select(".hover-label").remove(); // Remove the hover label
+        });
+    }
+  
+    function drawTuitionChart() {
+      yScale.domain([
+        0,
+        d3.max(filteredDataUniversities, (d) => d.tuitionPerStudent),
+      ]);
+  
+      transitionBars(filteredDataUniversities, "tuitionPerStudent", yScale);
+  
+      svg
+        .selectAll(".label")
+        .data(filteredDataUniversities)
+        .join("text")
+        .attr("class", "label")
+        .transition()
+        .duration(750)
+        .attr("x", (d) => xScale(d.Institutions) + xScale.bandwidth() / 2)
+        .attr("y", (d) => yScale(d.tuitionPerStudent) - 10)
+        .text((d) => d3.format("$.2s")(d.tuitionPerStudent))
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-size", "12px");
+  
+      svg
+        .select(".y-axis")
+        .transition()
+        .duration(750)
+        .call(d3.axisLeft(yScale));
+  
+      svg
+        .select(".x-axis")
+        .transition()
+        .duration(750)
+        .call(d3.axisBottom(xScale))
+        .selectAll("text")
+        .text((d) => d.length > 15 ? `${d.slice(0, 15)}...` : d)
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-15)");
+  
+      const ubcValue = filteredDataUniversities.find(
+        (d) => d.Institutions === "University of British Columbia (UBC)"
+      ).tuitionPerStudent;
+  
+      addHoverEffect(filteredDataUniversities, "tuitionPerStudent", ubcValue);
+  
+      document.getElementById("vis2title").innerHTML =
+        "Approx. Income from Student Tuition";
+      document.getElementById("vis2subtitle").innerHTML =
+        "Across all of BC's post-secondary institutions with publicly available data";
+    }
+  
+    function drawSalaryChart() {
+      yScale.domain([0, d3.max(avgSalaries, (d) => d.avgSalary)]);
+  
+      transitionBars(avgSalaries, "avgSalary", yScale);
+  
       svg
         .selectAll(".label")
         .data(avgSalaries)
         .join("text")
         .attr("class", "label")
-        .attr("x", (d) => xScale(d.avgSalary) + 5)
-        .attr("y", (d) => yScale(d.Institution) + yScale.bandwidth() / 2)
-        .attr("dy", "0.35em")
-        .text((d) => `${d3.format("$,.0f")(d.avgSalary)}`)
+        .transition()
+        .duration(750)
+        .attr("x", (d) => xScale(d.Institution) + xScale.bandwidth() / 2)
+        .attr("y", (d) => yScale(d.avgSalary) - 10)
+        .text((d) => d3.format("$,.2f")(d.avgSalary))
+        .attr("text-anchor", "middle")
         .attr("fill", "black")
         .attr("font-size", "12px");
   
-      // Axes
       svg
-        .append("g")
-        .call(d3.axisBottom(xScale).ticks(10, "s"))
-        .attr("transform", `translate(0, ${height - margin.bottom})`);
+        .select(".y-axis")
+        .transition()
+        .duration(750)
+        .call(d3.axisLeft(yScale));
   
       svg
-        .append("g")
-        .call(d3.axisLeft(yScale))
-        .attr("transform", `translate(${margin.left}, 0)`);
+        .select(".x-axis")
+        .transition()
+        .duration(750)
+        .call(d3.axisBottom(xScale))
+        .selectAll("text")
+        .text((d) => d.length > 15 ? `${d.slice(0, 15)}...` : d)
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-15)");
+  
+      const ubcValue = avgSalaries.find(
+        (d) => d.Institution === "University of British Columbia (UBC)"
+      ).avgSalary;
+  
+      addHoverEffect(avgSalaries, "avgSalary", ubcValue);
   
       document.getElementById("vis2title").innerHTML = "Average Staff Compensation";
-      document.getElementById("vis2subtitle").innerHTML = "Average of the 2020/2021 salaries of staff whose salary is over $75,000";
+      document.getElementById("vis2subtitle").innerHTML =
+        "Average of the 2020/2021 salaries of staff whose salary is over $75,000";
     }
   
-    // Draw the default chart
     drawTuitionChart();
   
-    // Attach redraw function globally for external calls
     window.tuitionVis2 = drawTuitionChart;
     window.salaryVis2 = drawSalaryChart;
   })();

@@ -141,3 +141,9 @@ p {
   margin-right: auto;
   margin-left: auto;
 }
+
+.s5 .text-box {
+  position: relative;
+  top: -11rem;
+  left: 20rem;
+}
