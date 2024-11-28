@@ -1,7 +1,7 @@
 (async function runApp() {
     const config = {
       width: 900,
-      height: 400,
+      height: 500,
       margin: { top: 40, right: 50, bottom: 70, left: 100 },
       dataPathUniversities: "datasets/bc_universities_2022_23_tuition.csv",
       dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",

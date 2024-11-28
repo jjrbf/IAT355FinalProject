@@ -81,7 +81,7 @@
     .range([margin.top, height - margin.bottom])
     .padding(0.5);
 
-  function drawOriginalChart() {
+  function drawTuitionChart() {
     // Clear existing elements
     svg.selectAll("*").remove();
 
@@ -131,9 +131,12 @@
       .append("g")
       .call(d3.axisLeft(yScale))
       .attr("transform", `translate(${margin.left}, 0)`);
+
+      document.getElementById("vis1title").innerHTML = "Approx. Income from Student Tuition";
+      document.getElementById("vis1small").innerHTML = "Calculated using number of students in 2022/2023 × 2022/2023 tuition";
   }
 
-  function drawNewChart() {
+  function drawSalaryChart() {
     // Clear existing elements
     svg.selectAll("*").remove();
 
@@ -184,8 +187,9 @@
   }
 
   // Draw the default chart
-  drawOriginalChart();
+  drawTuitionChart();
 
   // Attach redraw function globally for external calls
-  window.redrawVis1 = drawNewChart;
+    window.tuitionVis1 = drawTuitionChart;
+    window.salaryVis1 = drawSalaryChart;
 })();
