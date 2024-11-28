@@ -29,6 +29,19 @@
       "Douglas College",
       "Justice Institute of B.C.",
       "University of the Fraser Valley",
+      // "Camosun College",
+      // "Capilano University",
+      // "Coast Mountain College",
+      // "College of New Caledonia",
+      // "College of the Rockies",
+      // "North Island College",
+      // "Royal Roads University",
+      // "Selkirk College",
+      // "Thompson Rivers University",
+      // "University of Northern B.C.",
+      // "University of the Fraser Valley",
+      // "University of Victoria",
+      // "Vancouver Island University",
     ];
   
     const filteredDataUniversities = datasetUniversities

@@ -8,8 +8,8 @@ const scrollToStep = (index) => {
     currentStep = index;
   }
   // implement it to go back to original
-  // if (index < 3)
-  if (index >= 3) redrawVis1();
+  if (index < 3) tuitionVis1();
+  if (index >= 3) salaryVis1();
 };
 
 // Handle scroll for desktop
