@@ -1,5 +1,5 @@
 const steps = document.querySelectorAll('[data-step]');
-let currentStep = 0;
+let currentStep = 5;
 let isScrolling = false; // To control the delay
 
 // Scroll to a specific step
@@ -10,8 +10,15 @@ const scrollToStep = (index) => {
     setTimeout(() => {
       currentStep = index;
       if (index < 3) tuitionVis1();
-      if (index >= 3) salaryVis1();
+      if (index == 3) salaryVis1();
+      if (index == 5) salaryVis3();
+      if (index == 6) highlightEntryVis3();
+      if (index == 7) allEntriesVis3();
+      if (index == 8) adjustYScaleVis3();
+      if (index >= 9) filterVis3();
+      console.log(currentStep)
     }, 500);
+
   }
 };
 

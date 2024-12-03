@@ -1,8 +1,8 @@
 (async function runApp() {
   const config = {
     width: 900,
-    height: 600,
-    margin: { top: 40, right: 50, bottom: 70, left: 100 },
+    height: 500,
+    margin: { top: 40, right: 50, bottom: 100, left: 100 },
     dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
     svgSelector: "#vis3Container",
   };
@@ -32,13 +32,13 @@
       salary: parseFloat(d.Remuneration) || 0,
     }));
 
-  const medianSalaries = universities.map((uni) => {
+  const averageSalaries = universities.map((uni) => {
     const salaries = filteredDataSalaries
       .filter((d) => d.Agency === uni)
       .map((d) => d.salary);
     return {
       Institution: uni,
-      medianSalary: d3.median(salaries) || 0,
+      averageSalary: d3.mean(salaries) || 0,
     };
   });
 
@@ -55,154 +55,244 @@
     .range([margin.left, width - margin.right])
     .padding(0.5);
 
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(filteredDataSalaries, (d) => d.salary)])
-    .range([height - margin.bottom, margin.top]);
+  const yScale = d3.scaleLinear().range([height - margin.bottom, margin.top]);
 
   const xAxisGroup = svg
     .append("g")
     .attr("class", "x-axis")
-    .attr("transform", `translate(0, ${height - margin.bottom})`)
-    .call(d3.axisBottom(xScale));
+    .attr("transform", `translate(0, ${height - margin.bottom})`);
 
   const yAxisGroup = svg
     .append("g")
     .attr("class", "y-axis")
-    .attr("transform", `translate(${margin.left}, 0)`)
-    .call(d3.axisLeft(yScale));
+    .attr("transform", `translate(${margin.left}, 0)`);
 
-  // Add X and Y axis labels
-  svg
-    .append("text")
-    .attr("class", "x-axis-label")
-    .attr("x", width / 2)
-    .attr("y", height - margin.bottom / 2 + 30)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "14px")
+  const xAxis = (scale) =>
+    d3
+      .axisBottom(scale)
+      .tickFormat((d) => d.length > 15 ? d.slice(0, 15) + "..." : d)
+      .tickPadding(10);
+  const yAxis = d3.axisLeft(yScale);
 
-  svg
-    .append("text")
-    .attr("class", "y-axis-label")
-    .attr("x", -height / 2)
-    .attr("y", margin.left / 4)
-    .attr("transform", "rotate(-90)")
-    .attr("text-anchor", "middle")
-    .attr("font-size", "14px")
-    .text("Salary");
+  function updateAxes(newYDomain, transitionDuration = 1000) {
+    yScale.domain(newYDomain);
 
-  // Rotate the x-axis labels
-  svg
-    .selectAll(".x-axis text")
-    .style("transform", "rotate(-45deg)")
-    .style("text-anchor", "end")
-    .style("transform-origin", "middle")
-    .style("font-size", "12px");
+    yAxisGroup.transition().duration(transitionDuration).call(yAxis);
+    xAxisGroup.transition().duration(transitionDuration).call(xAxis(xScale));
+    svg
+      .selectAll(".x-axis text")
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end");
+  }
 
-  // Add scatter plot points
-  svg
-    .selectAll(".scatter-point")
-    .data(filteredDataSalaries)
-    .join("circle")
-    .attr("class", "scatter-point")
-    .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
-    .attr("cy", (d) => yScale(d.salary))
-    .attr("r", 5)
-    .attr("fill", "steelblue")
-    .attr("opacity", 0.7)
-    .on("mouseover", (event, d) => {
-      d3.select("#tooltip")
-        .style("opacity", 1)
-        .style("left", `${event.pageX + 10}px`)
-        .style("top", `${event.pageY - 10}px`)
-        .html(
-          `Name: ${d.Name}<br>Salary: $${d3.format(
-            ",.2f"
-          )(d.salary)}`
-        );
-    })
-    .on("mouseout", () => {
-      d3.select("#tooltip").style("opacity", 0);
+  function addHoverEffects(selection) {
+    selection
+      .attr("opacity", 0.6)
+      .on("mouseover", function (event, d) {
+        d3.select(this)
+          .attr("opacity", 1)
+          .attr("stroke", "black")
+          .attr("stroke-width", 2);
+        d3.select("#tooltip")
+          .style("opacity", 1)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 10}px`)
+          .html(
+            `Name: ${d.Name || "Unavailable"}<br>Salary: $${d3.format(
+              ",.2f"
+            )(d.salary)}<br>Position: ${d.Position || "Unavailable"}`
+          );
+      })
+      .on("mouseout", function () {
+        d3.select(this).attr("opacity", 0.6).attr("stroke", null);
+        d3.select("#tooltip").style("opacity", 0);
+      });
+  }  
+
+  function clearElements(classes) {
+    classes.forEach((cls) => svg.selectAll(`.${cls}`).remove());
+  }
+
+  function drawAverageSalaryLines() {
+    clearElements(["scatter-point", "highlight-point", "median-line", "tooltip"]);
+  
+    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary)+10000];
+    updateAxes(medianDomain);
+  
+    svg
+      .selectAll(".median-line")
+      .data(averageSalaries)
+      .join("line")
+      .attr("class", "median-line")
+      .transition()
+      .duration(1000)
+      .attr("x1", (d) => xScale(d.Institution))
+      .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
+      .attr("y1", (d) => yScale(d.averageSalary))
+      .attr("y2", (d) => yScale(d.averageSalary))
+      .attr("stroke", "red")
+      .attr("stroke-width", 2)
+      .raise();
+  }
+  
+
+  function highlightEntryClosestToUBCAverage() {
+    clearElements(["scatter-point", "highlight-point", "tooltip", "median-line-updated"]);
+  
+    const ubcAverage = filteredDataSalaries.find((d) => d.Name === "Abel-Co, Karen");
+    
+    // need to implement dynamically getting ubc closest to average only in ubc
+    // const ubcAverage = averageSalaries.find((d) => d.Institution === "University of British Columbia (UBC)").averageSalary;
+    // const closestEntry = filteredDataSalaries.reduce((prev, curr) =>
+    //   Math.abs(curr.salary - ubcAverage) < Math.abs(prev.salary - ubcAverage) ? curr : prev
+    // );
+  
+    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary)+10000];
+    updateAxes(medianDomain);
+  
+    svg
+      .append("circle")
+      .attr("class", "highlight-point")
+      .attr("cx", xScale(ubcAverage.Agency) + xScale.bandwidth() / 2)
+      .attr("cy", yScale(ubcAverage.salary))
+      .attr("r", 8)
+      .attr("fill", "blue");
+  
+    // svg
+    //   .append("line")
+    //   .attr("class", "highlight-line")
+    //   .attr("x1", xScale(closestEntry.Agency) + xScale.bandwidth() / 2)
+    //   .attr("x2", xScale("University of British Columbia (UBC)") + xScale.bandwidth() / 2)
+    //   .attr("y1", yScale(closestEntry.salary))
+    //   .attr("y2", yScale(ubcMedian))
+    //   .attr("stroke", "black")
+    //   .attr("stroke-dasharray", "4 2")
+    //   .attr("stroke-width", 2);
+  
+    svg
+      .selectAll(".median-line")
+      .data(averageSalaries)
+      .join("line")
+      .attr("class", "median-line")
+      .transition()
+      .duration(1000)
+      .attr("x1", (d) => xScale(d.Institution))
+      .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
+      .attr("y1", (d) => yScale(d.averageSalary))
+      .attr("y2", (d) => yScale(d.averageSalary))
+      .attr("stroke", "red")
+      .attr("stroke-width", 2)
+      .raise();
+  }
+  
+  function drawAllEntriesWithTooltips() {
+    clearElements(["highlight-point", "highlight-line", "tooltip", "median-line-updated"]);
+  
+    // const salaryDomain = [0, d3.max(filteredDataSalaries, (d) => d.salary)];
+    // updateAxes(salaryDomain);
+  
+    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary)+10000];
+    updateAxes(medianDomain);
+  
+    const points = svg
+      .selectAll(".scatter-point")
+      .data(filteredDataSalaries)
+      .join("circle")
+      .attr("class", "scatter-point")
+      .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
+      .attr("cy", (d) => yScale(d.salary))
+      .attr("r", 5)
+      .attr("fill", "steelblue")
+      .lower();
+  
+    addHoverEffects(points);
+  
+    svg
+      .selectAll(".median-line")
+      .data(averageSalaries)
+      .join("line")
+      .attr("class", "median-line")
+      .transition()
+      .duration(1000)
+      .attr("x1", (d) => xScale(d.Institution))
+      .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
+      .attr("y1", (d) => yScale(d.averageSalary))
+      .attr("y2", (d) => yScale(d.averageSalary))
+      .attr("stroke", "red")
+      .attr("stroke-width", 2)
+      .raise();
+  }
+  
+  function adjustYScaleForTopUBCSalary() {
+    clearElements(["scatter-point", "median-line"]);
+  
+    // const ubcSalaries = filteredDataSalaries.filter((d) => d.Agency === "University of British Columbia (UBC)");
+    // const maxUBCSalary = d3.max(ubcSalaries, (d) => d.salary);
+    const salaryDomain = [0, d3.max(filteredDataSalaries, (d) => d.salary)];
+    updateAxes(salaryDomain);
+  
+    const points = svg
+      .selectAll(".scatter-point")
+      .data(filteredDataSalaries)
+      .join("circle")
+      .attr("class", "scatter-point")
+      .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
+      .attr("cy", (d) => yScale(d.salary))
+      .attr("r", 5)
+      .attr("fill", "steelblue");
+  
+    addHoverEffects(points);
+
+    svg
+      .selectAll("median-line-updated")
+      .data(averageSalaries)
+      .join("line")
+      .attr("class", "median-line-updated")
+      .transition()
+      .duration(1000)
+      .attr("x1", (d) => xScale(d.Institution))
+      .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
+      .attr("y1", (d) => yScale(d.averageSalary))
+      .attr("y2", (d) => yScale(d.averageSalary))
+      .attr("stroke", "red")
+      .attr("stroke-width", 2)
+      .raise();
+  }
+  
+  function filterToTop10FromEachUniversity() {
+    clearElements(["scatter-point", "highlight-point", "tooltip", "median-line-updated"]);
+  
+    const top10PerUniversity = universities.flatMap((uni) => {
+      return filteredDataSalaries
+        .filter((d) => d.Agency === uni)
+        .sort((a, b) => b.salary - a.salary)
+        .slice(0, 10);
     });
+  
+    const salaryDomain = [0, d3.max(top10PerUniversity, (d) => d.salary)];
+    updateAxes(salaryDomain);
+  
+    const points = svg
+      .selectAll(".scatter-point")
+      .data(top10PerUniversity)
+      .join("circle")
+      .attr("class", "scatter-point")
+      .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
+      .attr("cy", (d) => yScale(d.salary))
+      .attr("r", 5)
+      .attr("fill", "steelblue");
+  
+    addHoverEffects(points);
+  }
+  
 
-  // Add median lines
-  svg
-    .selectAll(".median-line")
-    .data(medianSalaries)
-    .join("line")
-    .attr("class", "median-line")
-    .attr("x1", (d) => xScale(d.Institution))
-    .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
-    .attr("y1", (d) => yScale(d.medianSalary))
-    .attr("y2", (d) => yScale(d.medianSalary))
-    .attr("stroke", "red")
-    .attr("stroke-width", 2);
+  // Attach functions to global scope
+  window.salaryVis3 = drawAverageSalaryLines;
+  window.highlightEntryVis3 = highlightEntryClosestToUBCAverage;
+  window.allEntriesVis3 = drawAllEntriesWithTooltips;
+  window.adjustYScaleVis3 = adjustYScaleForTopUBCSalary;
+  window.filterVis3 = filterToTop10FromEachUniversity;
 
-  // Tooltip
-  d3.select("body")
-    .append("div")
-    .attr("id", "tooltip")
-    .style("position", "absolute")
-    .style("background", "#fff")
-    .style("border", "1px solid #ccc")
-    .style("padding", "8px")
-    .style("border-radius", "4px")
-    .style("pointer-events", "none")
-    .style("opacity", 0);
-
-  // Initial zoom-in on the median lines
-  const minY = d3.min(medianSalaries, (d) => yScale(d.medianSalary));
-  const maxY = d3.max(medianSalaries, (d) => yScale(d.medianSalary));
-  const zoomedHeight = maxY - minY + 50;
-
-  svg.attr(
-    "viewBox",
-    `${margin.left} ${minY - 25} ${width - margin.left - margin.right} ${zoomedHeight}`
-  );
-
-  // Reposition the labels (x and y) relative to the zoom
-  svg.select(".x-axis-label").attr("y", height - margin.bottom / 2 + 30);
-  svg.select(".y-axis-label").attr("y", margin.left / 4);
-
-  // Zoom Out Button
-  d3.select("#zoomOutButton").on("click", () => {
-    svg.transition().duration(1000).attr("viewBox", `0 0 ${width} ${height}`);
-
-    yScale.domain([0, d3.max(filteredDataSalaries, (d) => d.salary)]);
-    xScale.range([margin.left, width - margin.right]);
-
-    // Update axes after zooming out
-    xAxisGroup.transition().duration(1000).call(d3.axisBottom(xScale));
-    yAxisGroup.transition().duration(1000).call(d3.axisLeft(yScale));
-
-    // Reposition the axis labels
-    svg.select(".x-axis-label").attr("y", height - margin.bottom / 2 + 30);
-    svg.select(".y-axis-label").attr("y", margin.left / 4);
-  });
-
-  // Zoom In Button
-  d3.select("#zoomInButton").on("click", () => {
-    const minY = d3.min(medianSalaries, (d) => yScale(d.medianSalary));
-    const maxY = d3.max(medianSalaries, (d) => yScale(d.medianSalary));
-    const zoomedHeight = maxY - minY + 50;
-
-    svg.transition().duration(1000).attr(
-      "viewBox",
-      `${margin.left} ${minY - 25} ${width - margin.left - margin.right} ${zoomedHeight}`
-    );
-
-    // Zoom back to focus on median lines
-    yScale.domain([0, d3.max(filteredDataSalaries, (d) => d.salary)]);
-    xScale.range([margin.left, width - margin.right]);
-
-    // Update axes after zooming in
-    xAxisGroup.transition().duration(1000).call(d3.axisBottom(xScale));
-    yAxisGroup.transition().duration(1000).call(d3.axisLeft(yScale));
-
-    // Reposition the axis labels
-    svg.select(".x-axis-label").attr("y", height - margin.bottom / 2 + 30);
-    svg.select(".y-axis-label").attr("y", margin.left / 4);
-  });
+  // Draw initial chart
+  drawAverageSalaryLines();
 })();
-
-
