@@ -1,5 +1,5 @@
 const steps = document.querySelectorAll('[data-step]');
-let currentStep = 5;
+let currentStep = 0;
 let isScrolling = false; // To control the delay
 
 // Scroll to a specific step
