@@ -2,7 +2,7 @@
   const config = {
     width: 900,
     height: 400,
-    margin: { top: 40, right: 200, bottom: 40, left: 210 },
+    margin: { top: 40, right: 240, bottom: 40, left: 210 },
     dataPathUniversities: "datasets/bc_universities_2022_23_tuition.csv",
     dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
     svgSelector: "#vis1Container",
@@ -144,7 +144,7 @@
             .append("tspan")
             .attr("x", xScale(d.totalRevenue) + 10) // Align with the bar
             .attr("dy", 0) // No vertical offset for the first part
-            .attr("fill", "black")
+            .attr("fill", "white")
             .text(totalRevenueText);
 
           // Add "=" sign
@@ -152,14 +152,14 @@
           .append("tspan")
           .attr("x", xScale(d.totalRevenue) + 10 + d3.select(this).node().getComputedTextLength()) // Position after the first part
           .attr("dy", 0) // Same vertical alignment as the first part
-          .attr("fill", "grey")
+          .attr("fill", "#E1F8EE")
           .text(" = ");
     
           // calculation formula, in grey
           d3.select(this)
             .append("tspan")
             .attr("x", xScale(d.totalRevenue) + 10 + d3.select(this).node().getComputedTextLength()) // Position after the first part
-            .attr("fill", "grey")
+            .attr("fill", "#92A4A3")
             .text(formulaText);
         });
     
@@ -168,7 +168,7 @@
         .append("g")
         .call(
           d3.axisBottom(xScale)
-            .ticks(10, "s")
+            .ticks(5, "s")
             .tickFormat((d) => {
               // Format numbers into abbreviated form (ex. $50k)
               if (d >= 1_000_000) return `$${(d / 1_000_000).toFixed(1)}M`;  // For millions
@@ -186,59 +186,90 @@
         .attr("font-size", "12px");
     
       // Title and footnotes
-      document.getElementById("vis1title").innerHTML = "Approx. Income from Student Tuition";
+      document.getElementById("vis1title").innerHTML = "UBC makes ALOT more money from its students";
       document.getElementById("vis1small").innerHTML = "Calculated using number of students in 2022/2023 × 2022/2023 tuition";
     }
 
-  function drawSalaryChart() {
-    // Clear existing elements
-    svg.selectAll("*").remove();
-
-    // Update scales
-    xScale.domain([0, d3.max(avgSalaries, (d) => d.avgSalary)]);
-
-    // Bars
-    svg
-      .selectAll("rect")
-      .data(avgSalaries)
-      .join("rect")
-      .attr("x", xScale(0))
-      .attr("y", (d) => yScale(d.Institution))
-      .attr("width", (d) => xScale(d.avgSalary) - xScale(0))
-      .attr("height", yScale.bandwidth())
-      .attr("fill", (d) =>
-        d.Institution === "University of British Columbia (UBC)"
-          ? "steelblue"
-          : "grey"
-      );
-
-    // Labels
-    svg
-      .selectAll(".label")
-      .data(avgSalaries)
-      .join("text")
-      .attr("class", "label")
-      .attr("x", (d) => xScale(d.avgSalary) + 5)
-      .attr("y", (d) => yScale(d.Institution) + yScale.bandwidth() / 2)
-      .attr("dy", "0.35em")
-      .text((d) => `${d3.format("$,.0f")(d.avgSalary)}`)
-      .attr("fill", "black")
-      .attr("font-size", "12px");
-
-    // Axes
-    svg
-      .append("g")
-      .call(d3.axisBottom(xScale).ticks(10, "s"))
-      .attr("transform", `translate(0, ${height - margin.bottom})`);
-
-    svg
-      .append("g")
-      .call(d3.axisLeft(yScale))
-      .attr("transform", `translate(${margin.left}, 0)`);
-
-    document.getElementById("vis1title").innerHTML = "Average Staff Compensation";
-    document.getElementById("vis1small").innerHTML = "Average of the 2020/2021 salaries of staff whose salary is over $75,000";
-  }
+    function drawSalaryChart() {
+      // Clear existing elements
+      svg.selectAll("*").remove();
+    
+      // Update scales
+      xScale.domain([0, d3.max(avgSalaries, (d) => d.avgSalary)]);
+    
+      // Bars
+      svg
+        .selectAll("rect")
+        .data(avgSalaries)
+        .join("rect")
+        .attr("x", xScale(0))
+        .attr("y", (d) => yScale(d.Institution))
+        .attr("width", (d) => xScale(d.avgSalary) - xScale(0))
+        .attr("height", yScale.bandwidth())
+        .attr("fill", (d) =>
+          d.Institution === "University of British Columbia (UBC)"
+            ? "#c6c6f4" // Highlight UBC
+            : "#D9D9D9"
+        );
+    
+      // Institution logos
+      svg
+        .selectAll(".logo")
+        .data(avgSalaries)
+        .join("image")
+        .attr("class", "logo")
+        .attr("x", (d) => xScale(d.avgSalary) - 30) // Position inside the bar
+        .attr("y", (d) => yScale(d.Institution) + yScale.bandwidth() / 4)
+        .attr("width", 25)
+        .attr("height", 25)
+        .attr("href", (d) => {
+          // Map logos
+          if (d.Institution.includes("UBC")) return "images/ubc-logo.png";
+          if (d.Institution.includes("SFU")) return "images/sfu-logo.png";
+          if (d.Institution.includes("BCIT")) return "images/bcit-logo.png";
+          if (d.Institution.includes("University of Victoria")) return "images/uvic-logo.png";
+          return null;
+        });
+    
+      // Average salary labels
+      svg
+        .selectAll(".label")
+        .data(avgSalaries)
+        .join("text")
+        .attr("class", "label")
+        .attr("x", (d) => xScale(d.avgSalary) + 5)
+        .attr("y", (d) => yScale(d.Institution) + yScale.bandwidth() / 2)
+        .attr("dy", "0.35em")
+        .text((d) => `${d3.format("$,.0f")(d.avgSalary)}`)
+        .attr("fill", "white")
+        .attr("font-size", "12px");
+    
+      // Axes
+      svg
+        .append("g")
+        .call(
+          d3.axisBottom(xScale)
+            .ticks(5, "s")
+            .tickFormat((d) => {
+              if (d >= 1_000_000) return `$${(d / 1_000_000).toFixed(1)}M`;
+              if (d >= 1_000) return `$${(d / 1_000).toFixed(1)}k`;
+              return `$${d3.format(",")(d)}`;
+            })
+        )
+        .attr("transform", `translate(0, ${height - margin.bottom})`)
+        .attr("font-size", "12px");
+    
+      svg
+        .append("g")
+        .call(d3.axisLeft(yScale))
+        .attr("transform", `translate(${margin.left}, 0)`)
+        .attr("font-size", "12px");
+    
+      // Title and footnotes
+      document.getElementById("vis1title").innerHTML = "...but pays quite comparably to the other top BC universities";
+      document.getElementById("vis1small").innerHTML =
+        "Average university staff salary";
+    }
 
   // Draw the default chart
   drawTuitionChart();

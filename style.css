@@ -13,12 +13,54 @@ body {
   align-items: center;
 }
 
+.titlebg{
+  background-repeat: repeat;
+  background-image: url(images/titlebg.png);
+}
+
 .full {
   height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
+}
+.centerPg {
   align-items: center;
   justify-content: center;
+}
+
+.column {
+  flex: 1;
+  width: 50%;
+}
+
+.image-column {
+  flex: 1; 
+  display: flex;
+  justify-content: flex-end; 
+}
+
+.darkbg {
+  background-color: #17212E;
+  color: #fff;
+}
+
+.margins {
+  margin-top: 80px;
+  margin-bottom: 80px;
+  margin-right: 80px;
+  margin-left: 80px;
+}
+
+.infoTitle {
+  align-items: start;
+  font-size: 4em;
+}
+
+.leftBottomAlign {
+  text-align: end;
+  display: flex;
+  align-self: flex-end;
 }
 
 .vis-container {
@@ -105,9 +147,12 @@ p {
 /* VISUALIZATION 1 STYLING */
 
 .vis-container.visualization1 {
-  align-items: unset;
-  margin-right: auto;
-  margin-left: auto;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  margin: 0 auto;
+  width: 80vw; 
 }
 
 .s3 .text-box:first-child {
@@ -137,9 +182,15 @@ p {
 /* VISUALIZATION 2 STYLING */
 
 .vis-container.visualization2 {
-  align-items: unset;
+  /* align-items: unset;
   margin-right: auto;
-  margin-left: auto;
+  margin-left: auto; */
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  margin: 0 auto;
+  width: 80vw; 
 }
 
 .s5 .text-box {
