@@ -207,6 +207,18 @@ p {
   left: 23rem;
 }
 
+#tooltip {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0; /* Initially hidden */
+  z-index: 100;
+}
+
 /* VISUALIZATION 4 STYLING */
 
 .vis-container.visualization4 {
@@ -218,7 +230,7 @@ p {
   gap: 4rem;
 }
 
-.s7 .text-box {
+.s12 .text-box {
   position: relative;
   top: -11rem;
   left: 30rem;
