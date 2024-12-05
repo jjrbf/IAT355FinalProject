@@ -53,9 +53,36 @@ body {
   margin-left: 80px;
 }
 
+/* CSS FOR HEADER STYLING */
+
 .infoTitle {
   align-items: start;
-  font-size: 4em;
+  font-size: 2rem;
+  color: #E1F8EE;
+}
+
+@media (min-width: 64rem) {
+
+  .infoTitle {
+    font-size: 2.5rem;
+  }
+
+}
+
+@media (min-width: 98rem) {
+
+  .infoTitle {
+    font-size: 4rem;
+  }
+
+}
+
+.white {
+  color: white;
+}
+
+.em-dash::after {
+  content: "—";
 }
 
 .leftBottomAlign {
@@ -199,6 +226,28 @@ p {
   width: 80vw;  */
 }
 
+.vis2-container {
+  display: flex;
+}
+
+.vis2-vis-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.vis2-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.vis2-text {
+  color: #E1F8EE;
+  font-size: 2.125rem;
+  font-weight: 600;
+}
+
 .s5 .text-box {
   position: relative;
   top: -11rem;
@@ -236,7 +285,7 @@ p {
   gap: 4rem;
 }
 
-.s12 .text-box {
+.s13 .text-box {
   position: relative;
   top: -11rem;
   left: 30rem;

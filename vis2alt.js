@@ -1,10 +1,11 @@
 (async function runApp() {
   const config = {
     width: 900,
-    height: 600,
+    height: 400,
     margin: { top: 60, right: 50, bottom: 70, left: 100 },
     dataPathExpenses: "datasets/UBCvsSFU_Expenses_2024.csv",
-    svgSelector: "#vis2Container",
+    svgSelector: "#vis2-1Container",
+    svgSelector2: "#vis2-2Container",
   };
 
   const { width, height, margin } = config;
@@ -134,4 +135,6 @@
   drawExpensesChart();
 
   window.expensesVis = drawExpensesChart;
+
+  window.expensesVis2 = drawExpensesChart;
 })();
