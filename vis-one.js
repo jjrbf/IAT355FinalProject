@@ -188,6 +188,7 @@
       // Title and footnotes
       document.getElementById("vis1title").innerHTML = "UBC makes ALOT more money from its students";
       document.getElementById("vis1small").innerHTML = "Calculated using number of students in 2022/2023 × 2022/2023 tuition";
+      document.getElementById("vis1subtitle").innerHTML = "BC university’s revenue from student tuition";
     }
 
     function drawSalaryChart() {
@@ -267,8 +268,8 @@
     
       // Title and footnotes
       document.getElementById("vis1title").innerHTML = "...but pays quite comparably to the other top BC universities";
-      document.getElementById("vis1small").innerHTML =
-        "Average university staff salary";
+      document.getElementById("vis1small").innerHTML = "Average of the 2020/2021 salaries of staff whose salary is over $75,000.";
+      document.getElementById("vis1subtitle").innerHTML = "Average university staff salary";
     }
 
   // Draw the default chart
