@@ -13,6 +13,15 @@ body {
   align-items: center;
 }
 
+.screenreader {
+  display: none;
+}
+
+.hidden {
+  visibility: hidden;
+  max-height: 0;
+}
+
 .titlebg{
   background-repeat: repeat;
   background-image: url(images/titlebg.png);
@@ -136,28 +145,26 @@ body {
 
 /* TYPE */
 
-h1 {
+.main-header {
   font-size: 4rem;
   margin-bottom: 3rem;
   font-weight: 700;
 }
 
-h2 {
+.secondary-heading {
   font-size: 2.5rem;
   margin-bottom: 2rem;
   font-weight: 700;
 }
 
-h3,
 .vis-title {
   font-size: 1.75rem;
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
-.vis2Title {
-  font-size: 4em;
-  align-self: center;
+.vis2title {
+  font-weight: 700;
 }
 
 p {
@@ -289,4 +296,63 @@ p {
   position: relative;
   top: -11rem;
   left: 30rem;
+}
+
+/* PROGRESS BAR STYLING */
+
+#progress-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0.8rem;
+  gap: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+#progress-bar.hide {
+  transform: translateY(100%);
+}
+
+.progress-item {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  background: #dcdcdc15;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.progress-item:has(~ .progress-item.active) {
+  background: #346269;
+}
+
+.progress-item.active {
+  background: #99D7C3;
+}
+
+.progress-item:hover {
+  background: #a9c2ba;
+}
+
+.progress-item span {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #17212E;
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  display: none;
+  white-space: nowrap;
+}
+
+.progress-item:hover span {
+  display: block;
 }

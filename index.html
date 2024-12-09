@@ -8,129 +8,147 @@
 </head>
 <body>
     <!-- INTRO TITLE -->
-    <div class="full centerPg text-only titlebg"  data-step="1">
-        <h1>UBC staff make HOW MUCH?!?!</h1>
+    <section class="full centerPg text-only titlebg" id="hero" data-step="1">
+        <h1 class="screenreader">An overview of BC university faculty compensations: UBC vs. other institutions</h1>
+        <p class="main-header">UBC staff make HOW MUCH?!?!</p>
         <p>A look into the staff compensation at British Columbia's biggest post-secondary institution.</p>
-    </div>
+    </section>
 
     <!-- INTRO SUBTITLE -->
-    <div class="darkbg">
-        <div class="full text-only" style="flex-direction: row;" data-step="2">
-            <div class="margins column" >
-                <!-- need to make this move to the next line -->
-                <h2 class="infoTitle em-dash">Post-secondary education is a <span class="white">massive investment</span></h2>
-                <p>your money, taxpayer money, donations, and more. But have you ever wondered, where does it all go? Let's pull back the curtain and uncover the story behind the dollars!</p>
-            </div>
-            <div class="margins right-column"> 
-                <img src="images/slide2detail.png">
-            </div>
+    <section class="full text-only darkbg" id="introduction" data-step="2">
+        <h2 class="screenreader">Introduction to readers</h2>
+        <div class="margins column" >
+            <!-- need to make this move to the next line -->
+            <p class="infoTitle em-dash secondary-heading">Post-secondary education is a <span class="white">massive investment</span></p>
+            <p>your money, taxpayer money, donations, and more. But have you ever wondered, where does it all go? Let's pull back the curtain and uncover the story behind the dollars!</p>
         </div>
-
-        <!-- VISUALIZATION 1 -->
-        <div>
-            <div class="full centerPg vis-container visualization1">
-                <h3 class="vis-title" id="vis1title">UBC makes ALOT more money from its students</h3>
-                <p class="vis-subtitle" id="vis1subtitle">BC university's revenue from student tuition </p>
-                <div id="vis1Container"></div>
-                <p class="vis-small" id="vis1small">Calculated using number of students in 2022/2023 × 2022/2023 tuition</p>
-            </div>
-            <div class="full s3" data-step="3">
-                <!-- <div class="text-box">This is the approximate income of each university coming from just tuition alone.</div>
-                <div class="text-box">UBC makes hella money. They have a lot of students. But just how much of it goes to their faculty?</div> -->
-            </div>
-            <div class="full s4" data-step="4">
-                <!-- <div class="text-box">This chart shows the average salaries of the top 4 universities in BC.</div>
-                <div class="text-box">UBC's average salary towers over all of the other universities. Why don't we look how the other universities stack up?</div> -->
-            </div>
+        <div class="margins right-column"> 
+            <img src="images/slide2detail.png">
         </div>
+    </section>
 
-        <!-- NARRATIVE INBETWEEN -->
-        <div class="full text-only" style="flex-direction: row;" data-step="5">
-            <div class="margins column" >
-                <h2 class="infoTitle">
-                    UBC makes so much more money from it's students, 
-                    but pays its staff similarly to the other top BC universities.
-                </h2>
-            </div>
-            <div class="margins right-column"> 
-                <h2 class="infoTitle leftBottomAlign">
-                    So where does that money go?
-                </h2>
-            </div>
+    <!-- VISUALIZATION 1 -->
+    <section class="darkbg">
+        <h2 class="screenreader">Initial statistics about UBC</h2>
+        <div class="full centerPg vis-container visualization1 ">
+            <h3 class="vis-title" id="vis1title">UBC makes ALOT more money from its students</h3>
+            <p class="vis-subtitle" id="vis1subtitle">BC university's revenue from student tuition </p>
+            <div id="vis1Container"></div>
+            <p class="vis-small" id="vis1small">Calculated using number of students in 2022/2023 × 2022/2023 tuition</p>
         </div>
+        <div class="full s3" data-step="3" id="university-revenue">
+            <!-- university revenue step -->
+        </div>
+        <div class="full s4" data-step="4" id="average-salaries">
+            <!-- average salaries step -->
+        </div>
+    </section>
 
-        <!-- VISUALIZATION 2 -->
-        <div>
-            <div class="full vis-container visualization2">
-                <h3 class="infoTitle margins" id="vis2title">Let's take a look at UBC's Fiscal Year 2024 Operational Budget</h3>
-                <!-- <p class="vis-subtitle" id="vis2subtitle">Average university staff salary</p> -->
-                <div class="vis2-container">
-                    <div class="vis2-vis-container">
-                        <div class="" id="vis2-1Container"></div>
-                        <div class="" id="vis2-2Container"></div>
-                    </div>
-                    <div class="vis2-text-container">
-                        <p class="vis2-text">UBC spends an overwhelming 1.9 billion dollars, three quarters of its annual operational budget on salaries and benefits for its staff.</p>
-                        <p class="vis2-text white">Looks like that money does go to the staff, but probing further, something is off...</p>
-                    </div>
+    <!-- NARRATIVE INBETWEEN -->
+    <section class="full text-only darkbg" data-step="5" id="ubc-exploration">
+        <div class="margins column" >
+            <p class="infoTitle secondary-heading">
+                UBC makes so much more money from it's students, 
+                but pays its staff similarly to the other top BC universities.
+            </p>
+        </div>
+        <div class="margins right-column"> 
+            <p class="infoTitle leftBottomAlign secondary-heading">
+                So where does that money go?
+            </p>
+        </div>
+    </section>
+
+    <!-- VISUALIZATION 2 -->
+    <section class="darkbg">
+        <h2 class="screenreader">Looking into UBC's operational budget</h2>
+        <div class="full vis-container visualization2">
+            <p class="infoTitle margins tertiary-heading vis2title" id="vis2title">Let's take a look at UBC's Fiscal Year 2024 Operational Budget</p>
+            <div class="vis2-container">
+                <div class="vis2-vis-container">
+                    <div class="" id="vis2-1Container"></div>
+                    <div class="" id="vis2-2Container"></div>
+                </div>
+                <div class="vis2-text-container">
+                    <p class="vis2-text">UBC spends an overwhelming 1.9 billion dollars, three quarters of its annual operational budget on salaries and benefits for its staff.</p>
+                    <p class="vis2-text white">Looks like that money does go to the staff, but probing further, something is off...</p>
                 </div>
             </div>
-            <div class="s6 full centerPg" data-step="6">
-                <!-- <div class="text-box">This is the chart that shows more universities' data compared to UBC. Hover over a bar to see the difference.</div> -->
-            </div>
-            <div class="s7 full centerPg" data-step="7">
-                <div class="text-box">THIS STEP SHOWS THE UBC AND SFU THING TOGETHER (NOT YET IMPLEMENTED)</div>
-            </div>
         </div>
+        <div class="s6 full centerPg" data-step="6" id="ubc-operational-budget">
+            <!-- UBC operational budget step -->
+        </div>
+        <div class="s7 full centerPg" data-step="7" id="sfu-vs-ubc">
+            <!-- SFU vs. UBC step -->
+            <div class="text-box">THIS STEP SHOWS THE UBC AND SFU THING TOGETHER (NOT YET IMPLEMENTED)</div>
+        </div>
+    </section>
 
-        <!-- VISUALIZATION 3 -->
-        <div>
-            <div class="full centerPg vis-container">
-                <h3 class="vis-title" id="vis3title">Employee Compensation</h3>
-                <p class="vis-subtitle" id="vis3subtitle">Across 10 post-secondary institutions in BC with the highest pay</p>
-                <div id="vis3Container"></div>
-            </div>
-            <div class="s8 full centerPg" data-step="8">
-                <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
-            </div>
-            <div class="s9 full centerPg" data-step="9">
-                <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
-            </div>
-            <div class="s10 full centerPg" data-step="10">
-                <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
-            </div>
-            <div class="s11 full centerPg" data-step="11">
-                <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
-            </div>
-            <div class="s12 full centerPg" data-step="12">
-                <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
-            </div>
+    <!-- NARRATIVE INBETWEEN #2 -->
+    <section class="full text-only darkbg" data-step="8" id="questioning-ubc-compensation">
+        <div class="margins column" >
+            <p class="infoTitle secondary-heading">
+                Recalling that compared to SFU, UBC gets double the amount of revenue from student tuition. How does UBC spends quadruple the amount on salary and benefits?
+            </p>
+        </div>
+        <div class="margins right-column"> 
+            <p class="infoTitle leftBottomAlign secondary-heading">
+                Do they really pay their staff like the other universities?
+            </p>
+        </div>
+    </section>
 
+    <!-- VISUALIZATION 3 -->
+    <section class="darkbg">
+        <h2 class="screenreader">A closer look into individual faculty salaries</h2>
+        <div class="full centerPg vis-container">
+            <p class="vis-title" id="vis3title">Employee Compensation</p>
+            <p class="vis-subtitle" id="vis3subtitle">Across 10 post-secondary institutions in BC with the highest pay</p>
+            <div id="vis3Container"></div>
         </div>
-        <!-- VISUALIZATION 4-->
-        <div>
-            <div class="full centerPg vis-container visualization4">
-                <div class="visualization-container">
-                    <h3 class="vis-title" id="vis4title">Compare Salaries Between Individuals</h3>
-                    <p class="vis-subtitle" id="vis4subtitle">A chart showing all of the entries in the dataset.</p>
-                    <div id="vis4Container"></div>
-                </div>
-                <div class="input-container">
-                    <label for="facultySearch">Search for a faculty member:</label>
-                    <input type="search" name="facultySearch" id="vis4faculty">
-                    <!-- implement showing where they're from here -->
-                </div>
+        <div class="s9 full centerPg" data-step="9" id="university-average-salaries">
+            <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
+        </div>
+        <div class="s10 full centerPg" data-step="10" id="closest-faculty-member-to-average">
+            <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
+        </div>
+        <div class="s11 full centerPg" data-step="11" id="showing-all-entries">
+            <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
+        </div>
+        <div class="s12 full centerPg" data-step="12" id="rescaled-average-and-entries">
+            <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
+        </div>
+        <div class="s13 full centerPg" data-step="13" id="top-10-salaries-per-university">
+            <!-- <div class="text-box">Here you can see the salary of staff members compared to the median line. Hover over each plot to view each persons details</div> -->
+        </div>
+    </section>
+
+    <!-- VISUALIZATION 4-->
+    <section class="darkbg">
+        <h2 class="screenreader">Search for an individual university faculty salary</h2>
+        <div class="full centerPg vis-container visualization4">
+            <div class="visualization-container">
+                <p class="vis-title" id="vis4title">Compare Salaries Between Individuals</p>
+                <p class="vis-subtitle" id="vis4subtitle">A chart showing all of the entries in the dataset.</p>
+                <div id="vis4Container"></div>
             </div>
-            <div class="full centerPg s13" data-step="13">
-                <div class="text-box">Know someone working as university faculty? Search for a name in the search bar below to see how they stack up against the averages!</div>
+            <div class="input-container">
+                <label for="facultySearch">Search for a faculty member:</label>
+                <input type="search" name="facultySearch" id="vis4faculty">
+                <!-- implement showing where they're from here -->
             </div>
         </div>
-    </div>
-    <div class="full centerPg text-only" data-step="14">
-        <h2>Concluding Header Goes Here</h2>
+        <div class="full centerPg s14" data-step="14" id="search">
+            <div class="text-box">Know someone working as university faculty? Search for a name in the search bar below to see how they stack up against the averages!</div>
+        </div>
+    </section>
+
+    <section class="full centerPg text-only" data-step="15" id="conclusion">
+        <h2 class="screenreader">Conclusion</h2>
+        <p class="secondary-heading">Conclusion header</p>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum obcaecati tempora possimus temporibus, odit, minus labore et animi, facere consequatur laboriosam error quae explicabo minima at impedit. Debitis quo excepturi facilis ratione sit unde possimus culpa autem molestias? Nihil, soluta deserunt! Voluptatem sapiente saepe maxime beatae! Alias temporibus itaque aspernatur.</p>
-    </div>
-    <div class="full centerPg text-only" data-step="15">
+    </section>
+    <div class="full centerPg text-only" data-step="16" id="credits">
         <h2>Credits</h2>
         <ul>
             <li>
@@ -152,6 +170,7 @@
       <button id="next-step">Next</button>
     </div>
     <div id="tooltip"></div>
+    <div id="progress-bar"></div>
     <!-- Include the D3.js library -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="scroll.js"></script>
