@@ -56,10 +56,7 @@ body {
 }
 
 .margins {
-  margin-top: 80px;
-  margin-bottom: 80px;
-  margin-right: 80px;
-  margin-left: 80px;
+  margin: 5rem;
 }
 
 /* CSS FOR HEADER STYLING */
@@ -67,7 +64,7 @@ body {
 .infoTitle {
   align-items: start;
   font-size: 2rem;
-  color: #E1F8EE;
+  color: #99D7C3;
 }
 
 @media (min-width: 64rem) {
@@ -88,6 +85,10 @@ body {
 
 .white {
   color: white;
+}
+
+.blue {
+  color: #99D7C3;
 }
 
 .em-dash::after {
@@ -223,24 +224,38 @@ p {
 
 .vis-container.visualization2 {
   align-items: unset;
-  margin-right: auto;
-  margin-left: auto;
-  /* display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
-  align-items: center; 
-  margin: 0 auto;
-  width: 80vw;  */
+  display: block;
+  padding: 5rem;
+  max-height: 100vh;
+}
+
+#vis2title {
+  margin-bottom: 2rem;
 }
 
 .vis2-container {
   display: flex;
 }
 
+.vis2-container.reverse {
+  flex-direction: row-reverse;
+  height: calc(100vh - 10rem);
+}
+
 .vis2-vis-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.vis2-number {
+  font-size: 3.5rem;
+  font-weight: 600;
+}
+
+.vis2-number-big {
+  font-size: 5.5rem;
+  font-weight: 600;
 }
 
 .vis2-text-container {
@@ -253,12 +268,6 @@ p {
   color: #E1F8EE;
   font-size: 2.125rem;
   font-weight: 600;
-}
-
-.s5 .text-box {
-  position: relative;
-  top: -11rem;
-  left: 20rem;
 }
 
 /* VISUALIZATION 3 STYLING */

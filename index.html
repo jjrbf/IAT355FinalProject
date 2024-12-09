@@ -62,16 +62,33 @@
     <!-- VISUALIZATION 2 -->
     <section class="darkbg">
         <h2 class="screenreader">Looking into UBC's operational budget</h2>
-        <div class="full vis-container visualization2">
-            <p class="infoTitle margins tertiary-heading vis2title" id="vis2title">Let's take a look at UBC's Fiscal Year 2024 Operational Budget</p>
+        <div class="vis-container visualization2">
+            <p class="infoTitle tertiary-heading vis2title" id="vis2title">Let's take a look at UBC's Fiscal Year 2024 Operational Budget</p>
             <div class="vis2-container">
                 <div class="vis2-vis-container">
-                    <div class="" id="vis2-1Container"></div>
-                    <div class="" id="vis2-2Container"></div>
+                    <figure>
+                        <div class="" id="vis2-1Container"></div>
+                        <figcaption class="vis2subtitle">UBC 2024 Expenses</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="" id="vis2-2Container"></div>
+                        <figcaption class="vis2subtitle" id="vis2-2subtitle">SFU 2024 Expenses</figcaption>
+                    </figure>
                 </div>
-                <div class="vis2-text-container">
+                <div class="vis2-text-container" id="first-step">
                     <p class="vis2-text">UBC spends an overwhelming 1.9 billion dollars, three quarters of its annual operational budget on salaries and benefits for its staff.</p>
                     <p class="vis2-text white">Looks like that money does go to the staff, but probing further, something is off...</p>
+                </div>
+                <div class="vis2-text-container" id="second-step">
+                    <p class="vis2-text">Comparing to SFU,  both universities spend 75% of their budgets on staff salaries and benefits, however...</p>
+                    <div class="statistic">
+                        <p class="vis2-number white">~2x</p>
+                        <p class="white">UBC's income is from student tuition compared to SFU</p>
+                    </div>
+                    <div class="statistic">
+                        <p class="vis2-number-big blue">~4x</p>
+                        <p class="white">UBC's spending on staff salary and benefits compared to SFU</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,7 +97,6 @@
         </div>
         <div class="s7 full centerPg" data-step="7" id="sfu-vs-ubc">
             <!-- SFU vs. UBC step -->
-            <div class="text-box">THIS STEP SHOWS THE UBC AND SFU THING TOGETHER (NOT YET IMPLEMENTED)</div>
         </div>
     </section>
 
@@ -175,7 +191,8 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="scroll.js"></script>
     <script type="module" src="vis-one.js"></script>
-    <script type="module" src="vis2alt.js"></script>
+    <!-- <script type="module" src="vis-one-point-two.js"></script> -->
+    <script type="module" src="vis-two.js"></script>
     <script type="module" src="vis-three.js"></script>
     <script type="module" src="vis-four.js"></script>
 </body>

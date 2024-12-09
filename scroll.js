@@ -51,6 +51,8 @@ const scrollToStep = (index) => {
       // Trigger visuals based on the current step
       if (index < 3) tuitionVis1();
       if (index == 3) salaryVis1();
+      if (index == 5) firstStep();
+      if (index == 6) secondStep();
       if (index == 8) salaryVis3();
       if (index == 9) highlightEntryVis3();
       if (index == 10) allEntriesVis3();
@@ -74,6 +76,9 @@ const handleInitialHash = () => {
       scrollToStep(currentStep);
     }
   }
+  // implement it to go back to original
+  // if (index < 3)
+  if (index >= 3) redrawVis1();
 };
 
 // Handle scroll for desktop

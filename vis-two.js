@@ -1,248 +1,158 @@
 (async function runApp() {
-    const config = {
-      width: 900,
-      height: 400,
-      margin: { top: 40, right: 50, bottom: 70, left: 100 },
-      dataPathUniversities: "datasets/bc_universities_2022_23_tuition.csv",
-      dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
-      svgSelector: "#vis2Container",
-    };
-  
-    const { width, height, margin } = config;
-  
-    // Load and preprocess data
-    const datasetUniversities = await d3.csv(
-      config.dataPathUniversities,
-      d3.autoType
-    );
-  
-    const datasetSalaries = await d3.csv(config.dataPathSalaries, d3.autoType);
-  
+  const config = {
+    width: 600,
+    height: 400,
+    margin: { top: 20, right: 0, bottom: 20, left: 0 },
+    dataPathExpenses: "datasets/UBCvsSFU_Expenses_2024.csv",
+    svgSelector: "#vis2-1Container",
+    svgSelector2: "#vis2-2Container",
+  };
+
+  const { margin } = config;
+  let height = config.height;
+  let width = config.width;
+
+  // Load and preprocess data
+  const datasetExpenses = await d3.csv(config.dataPathExpenses, d3.autoType);
+
+  function drawCharts() {
     const universities = [
-      "University of British Columbia (UBC)",
-      "Simon Fraser University (SFU)",
-      "BCIT",
-      "University of Victoria",
-      "Kwantlen Polytechnic University",
-      "Vancouver Community College (VCC)",
-      "Langara College",
-      "Douglas College",
-      "Justice Institute of B.C.",
-      "University of the Fraser Valley",
-      // "Camosun College",
-      // "Capilano University",
-      // "Coast Mountain College",
-      // "College of New Caledonia",
-      // "College of the Rockies",
-      // "North Island College",
-      // "Royal Roads University",
-      // "Selkirk College",
-      // "Thompson Rivers University",
-      // "University of Northern B.C.",
-      // "University of the Fraser Valley",
-      // "University of Victoria",
-      // "Vancouver Island University",
+      { name: "UBC", selector: config.svgSelector },
+      { name: "SFU", selector: config.svgSelector2 },
     ];
-  
-    const filteredDataUniversities = datasetUniversities
-      .filter((d) => universities.includes(d.Institutions))
-      .map((d) => ({
-        ...d,
-        tuitionPerStudent: parseFloat(d["tuitionPerStudent"]) || 0,
-      }));
-  
-    const filteredDataSalaries = datasetSalaries
-      .filter((d) => universities.includes(d.Agency))
-      .map((d) => ({
-        ...d,
-        salary: parseFloat(d["Remuneration"]) || 0,
-      }));
-  
-    const avgSalaries = universities.map((uni) => {
-      const uniSalaries = filteredDataSalaries
-        .filter((d) => d.Agency === uni)
-        .map((d) => d.salary);
-  
-      return {
-        Institution: uni,
-        avgSalary: d3.mean(uniSalaries) || 0,
-      };
-    });
-  
-    const svg = d3
-      .select(config.svgSelector)
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .style("border", "1px solid black");
-  
-    const xScale = d3
-      .scaleBand()
-      .domain(universities)
-      .range([margin.left, width - margin.right])
-      .padding(0.5);
-  
-    const yScale = d3.scaleLinear().range([height - margin.bottom, margin.top]);
-  
-    svg
-      .append("g")
-      .attr("class", "y-axis")
-      .attr("transform", `translate(${margin.left}, 0)`);
-  
-    svg
-      .append("g")
-      .attr("class", "x-axis")
-      .attr("transform", `translate(0, ${height - margin.bottom})`);
-  
-    function transitionBars(data, key, yScale) {
-      svg
-        .selectAll("rect")
-        .data(data)
-        .join("rect")
-        .transition()
-        .duration(750)
-        .attr("x", (d) => xScale(d.Institutions || d.Institution))
-        .attr("y", (d) => yScale(d[key]))
-        .attr("width", xScale.bandwidth())
-        .attr("height", (d) => height - margin.bottom - yScale(d[key]))
-        .attr("fill", (d) =>
-          (d.Institutions || d.Institution) ===
-          "University of British Columbia (UBC)"
-            ? "steelblue"
-            : "grey"
-        );
-    }
-  
-    function addHoverEffect(data, key, ubcValue) {
-      svg
-        .selectAll("rect")
+
+    universities.forEach((uni) => {
+      const container = d3.select(uni.selector);
+      container.selectAll("svg").remove();
+
+      const svg = container
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      const uniData = datasetExpenses.find((d) => d.University === uni.name);
+      if (!uniData) {
+        console.error(`${uni.name} data not found in the dataset.`);
+        return;
+      }
+
+      const expenseCategories = [
+        { label: "Salaries and Benefits", value: uniData.SalariesAndBenefits, color: "#519FAB" },
+        { label: "Supplies and Sundries", value: uniData.Supplies, color: "#58B7C6" },
+        { label: "Scholarships, Fellowships, and Bursaries", value: uniData.ScholarshipsAndBursaries, color: "#79D0B4" },
+        { label: "Cost of Goods Sold, Utilities, and Other", value: uniData.CostOfGoodsAndUtilities, color: "#8DE8CA" },
+        { label: "Professional and Consulting", value: uniData.ProfessionalFees, color: "#ACFAD8" },
+        { label: "Travel and Interest Cost", value: uniData.TravelAndInterest, color: "#E1F8EE" },
+      ];
+
+      const totalValue = d3.sum(expenseCategories, (d) => d.value);
+      if (totalValue === 0) {
+        console.error(`No data for ${uni.name}.`);
+        return;
+      }
+
+      const radius = Math.min(width, height) / 2 - margin.top;
+
+      const pie = d3.pie().value((d) => d.value).sort(null);
+      const arc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius);
+      const arcHover = d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 1.1);
+
+      const g = svg.append("g").attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+      const arcs = g
+        .selectAll(".arc")
+        .data(pie(expenseCategories))
+        .enter()
+        .append("g")
+        .attr("class", "arc");
+
+      const defaultCategory = expenseCategories[0]; // Highlight `Salaries and Benefits` by default
+
+      arcs
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", (d) => d.data.color)
         .on("mouseover", function (event, d) {
-          svg.selectAll(".label").style("opacity", 0); // Hide all labels
-          d3.select(this).attr("fill", "orange"); // Highlight the hovered bar
-  
-          const difference = d[key] - ubcValue;
-  
-          svg
-            .append("text")
-            .attr("class", "hover-label")
-            .attr("x", xScale(d.Institutions || d.Institution) + xScale.bandwidth() / 2)
-            .attr("y", yScale(d[key]) - 10)
-            .attr("text-anchor", "middle")
-            .text(d3.format("+,.2s")(difference))
-            .attr("fill", "black")
-            .attr("font-size", "12px");
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("d", d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 1.1));
+
+          tooltip
+            .style("opacity", 1)
+            .html(
+              `<strong>${d.data.label}</strong><br>Value: $${d3.format(",.0f")(d.data.value)}`
+            )
+            .style("left", `${event.pageX + 10}px`)
+            .style("top", `${event.pageY - 20}px`);
         })
         .on("mouseout", function () {
-          svg.selectAll(".label").style("opacity", 1); // Restore all labels
-          d3.select(this).attr("fill", (d) =>
-            (d.Institutions || d.Institution) ===
-            "University of British Columbia (UBC)"
-              ? "steelblue"
-              : "grey"
-          );
-          svg.select(".hover-label").remove(); // Remove the hover label
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("d", arc);
+
+          tooltip.style("opacity", 0);
         });
-    }
-  
-    function drawTuitionChart() {
-      yScale.domain([
-        0,
-        d3.max(filteredDataUniversities, (d) => d.tuitionPerStudent),
-      ]);
-  
-      transitionBars(filteredDataUniversities, "tuitionPerStudent", yScale);
-  
-      svg
-        .selectAll(".label")
-        .data(filteredDataUniversities)
-        .join("text")
-        .attr("class", "label")
-        .transition()
-        .duration(750)
-        .attr("x", (d) => xScale(d.Institutions) + xScale.bandwidth() / 2)
-        .attr("y", (d) => yScale(d.tuitionPerStudent) - 10)
-        .text((d) => d3.format("$.2s")(d.tuitionPerStudent))
+
+      const tooltip = d3
+      .select("#tooltip")
+      .style("position", "absolute")
+      .style("background", "rgba(0, 0, 0, 0.7)")
+      .style("color", "#fff")
+      .style("padding", "5px 10px")
+      .style("border-radius", "5px")
+      .style("opacity", 0)
+      .style("pointer-events", "none");
+
+      // Add central label
+      g.append("text")
         .attr("text-anchor", "middle")
-        .attr("fill", "black")
-        .attr("font-size", "12px");
-  
-      svg
-        .select(".y-axis")
-        .transition()
-        .duration(750)
-        .call(d3.axisLeft(yScale));
-  
-      svg
-        .select(".x-axis")
-        .transition()
-        .duration(750)
-        .call(d3.axisBottom(xScale))
-        .selectAll("text")
-        .text((d) => d.length > 15 ? `${d.slice(0, 15)}...` : d)
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-15)");
-  
-      const ubcValue = filteredDataUniversities.find(
-        (d) => d.Institutions === "University of British Columbia (UBC)"
-      ).tuitionPerStudent;
-  
-      addHoverEffect(filteredDataUniversities, "tuitionPerStudent", ubcValue);
-  
-      document.getElementById("vis2title").innerHTML =
-        "Approx. Income from Student Tuition";
-      document.getElementById("vis2subtitle").innerHTML =
-        "Across all of BC's post-secondary institutions with publicly available data";
-    }
-  
-    function drawSalaryChart() {
-      yScale.domain([0, d3.max(avgSalaries, (d) => d.avgSalary)]);
-  
-      transitionBars(avgSalaries, "avgSalary", yScale);
-  
-      svg
-        .selectAll(".label")
-        .data(avgSalaries)
-        .join("text")
-        .attr("class", "label")
-        .transition()
-        .duration(750)
-        .attr("x", (d) => xScale(d.Institution) + xScale.bandwidth() / 2)
-        .attr("y", (d) => yScale(d.avgSalary) - 10)
-        .text((d) => d3.format("$,.2f")(d.avgSalary))
-        .attr("text-anchor", "middle")
-        .attr("fill", "black")
-        .attr("font-size", "12px");
-  
-      svg
-        .select(".y-axis")
-        .transition()
-        .duration(750)
-        .call(d3.axisLeft(yScale));
-  
-      svg
-        .select(".x-axis")
-        .transition()
-        .duration(750)
-        .call(d3.axisBottom(xScale))
-        .selectAll("text")
-        .text((d) => d.length > 15 ? `${d.slice(0, 15)}...` : d)
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-15)");
-  
-      const ubcValue = avgSalaries.find(
-        (d) => d.Institution === "University of British Columbia (UBC)"
-      ).avgSalary;
-  
-      addHoverEffect(avgSalaries, "avgSalary", ubcValue);
-  
-      document.getElementById("vis2title").innerHTML = "Average Staff Compensation";
-      document.getElementById("vis2subtitle").innerHTML =
-        "Average of the 2020/2021 salaries of staff whose salary is over $75,000";
-    }
-  
-    drawTuitionChart();
-  
-    window.tuitionVis2 = drawTuitionChart;
-    window.salaryVis2 = drawSalaryChart;
-  })();
-  
+        .attr("dy", "0.35em")
+        .style("font-size", "16px")
+        .style("fill", "#686E77")
+        .text(uni.name);
+    });
+  }
+
+  function firstStep() {
+    height = 400;
+    width = 600;
+    // hide
+    d3.select(config.svgSelector2).classed("hidden", true);
+    d3.select("#vis2-2subtitle").classed("hidden", true);
+    d3.select("#second-step").classed("hidden", true);
+
+    // show
+    d3.select("#vis2title").classed("hidden", false);
+    d3.select("#first-step").classed("hidden", false);
+
+    // toggle
+    d3.select(".vis2-container").classed("reverse", false);
+
+    drawCharts();
+  }
+
+  function secondStep() {
+    height = 225;
+    width = 400;
+    // hide
+    d3.select("#vis2title").classed("hidden", true);
+    d3.select("#first-step").classed("hidden", true);
+
+    // show
+    d3.select(config.svgSelector2).classed("hidden", false);
+    d3.select("#vis2-2subtitle").classed("hidden", false);
+    d3.select("#second-step").classed("hidden", false);
+
+    // toggle
+    d3.select(".vis2-container").classed("reverse", true);
+    
+    drawCharts();
+  }
+
+  drawCharts();
+
+  window.firstStep = firstStep;
+  window.secondStep = secondStep;
+})();
