@@ -698,6 +698,8 @@ const colorScale = d3
   .scaleOrdinal()
   .domain(d3.range(1, 11)) // Match ranks 1 to 10
   .range(customColors);
+
+// KOOSHA here is the function that does it
   
 function filterToTop10FromEachUniversity() {
   clearElements(["scatter-point", "highlight-point", "tooltip", "median-line", "median-line-updated", "highlight-label", "arrow-shaft"]);
@@ -776,6 +778,8 @@ function filterToTop10FromEachUniversity() {
       }))
     );
 
+    // KOOSHA i want to sync the hover effects from the points to the bars, i want the tooltip to show up beside the point while the bar gets an outline or something
+
     // Bars
     svgSupplementary
       .selectAll(".bar-group")
@@ -801,6 +805,8 @@ function filterToTop10FromEachUniversity() {
 
     svgSupplementary.append("g").call(d3.axisLeft(yScaleSupplementary));
   }
+
+  // KOOSHA code for points hover
 
   // Hover effect for scatter points
   points
