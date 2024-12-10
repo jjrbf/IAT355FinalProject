@@ -317,10 +317,8 @@ p {
   gap: 4rem;
 }
 
-.s13 .text-box {
-  position: relative;
-  top: -11rem;
-  left: 30rem;
+.input-container {
+  place-items: flex-start;
 }
 
 /* CONCLUSION STYLING */
