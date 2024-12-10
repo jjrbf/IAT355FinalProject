@@ -71,7 +71,7 @@
                         <figcaption class="vis2subtitle">UBC 2024 Expenses</figcaption>
                     </figure>
                     <figure>
-                        <div class="" id="vis2-2Container"></div>
+                        <div class="hidden" id="vis2-2Container"></div>
                         <figcaption class="vis2subtitle" id="vis2-2subtitle">SFU 2024 Expenses</figcaption>
                     </figure>
                 </div>
@@ -79,7 +79,7 @@
                     <p class="vis2-text">UBC spends an overwhelming 1.9 billion dollars, three quarters of its annual operational budget on salaries and benefits for its staff.</p>
                     <p class="vis2-text white">Looks like that money does go to the staff, but probing further, something is off...</p>
                 </div>
-                <div class="vis2-text-container" id="second-step">
+                <div class="vis2-text-container hidden" id="second-step">
                     <p class="vis2-text">Comparing to SFU,  both universities spend 75% of their budgets on staff salaries and benefits, however...</p>
                     <div class="statistic">
                         <p class="vis2-number white">~2x</p>
@@ -117,9 +117,9 @@
     <!-- VISUALIZATION 3 -->
     <section class="darkbg">
         <h2 class="screenreader">A closer look into individual faculty salaries</h2>
-        <div class="full centerPg vis-container">
-            <p class="vis-title" id="vis3title">Employee Compensation</p>
-            <p class="vis-subtitle" id="vis3subtitle">Across 10 post-secondary institutions in BC with the highest pay</p>
+        <div class="vis-container visualization3">
+            <p class="vis-main" id="vis3main">Let's start off with the average salary for each university...</p>
+            <!-- <p class="vis-subtitle" id="vis3subtitle">Across 10 post-secondary institutions in BC with the highest pay</p> -->
             <div id="vis3Container"></div>
         </div>
         <div class="s9 full centerPg" data-step="9" id="university-average-salaries">

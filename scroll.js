@@ -53,6 +53,7 @@ const scrollToStep = (index) => {
       if (index == 3) salaryVis1();
       if (index == 5) firstStep();
       if (index == 6) secondStep();
+      if (index == 7) clearVis3();
       if (index == 8) salaryVis3();
       if (index == 9) highlightEntryVis3();
       if (index == 10) allEntriesVis3();

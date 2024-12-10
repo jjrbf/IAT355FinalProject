@@ -2,7 +2,7 @@
   const config = {
     width: 900,
     height: 500,
-    margin: { top: 40, right: 50, bottom: 100, left: 100 },
+    margin: { top: 40, right: 30, bottom: 80, left: 70 },
     dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
     svgSelector: "#vis3Container",
   };
@@ -47,7 +47,6 @@
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-    .style("border", "1px solid black");
 
   const xScale = d3
     .scaleBand()
@@ -87,7 +86,7 @@
 
   function addHoverEffects(selection) {
     selection
-      .attr("opacity", 0.6)
+      .attr("opacity", 0.3)
       .on("mouseover", function (event, d) {
         d3.select(this)
           .attr("opacity", 1)
@@ -104,7 +103,7 @@
           );
       })
       .on("mouseout", function () {
-        d3.select(this).attr("opacity", 0.6).attr("stroke", null);
+        d3.select(this).attr("opacity", 0.3).attr("stroke", null);
         d3.select("#tooltip").style("opacity", 0);
       });
   }  
@@ -114,9 +113,18 @@
   }
 
   function drawAverageSalaryLines() {
-    clearElements(["scatter-point", "highlight-point", "median-line", "tooltip"]);
+    clearElements([
+      "scatter-point",
+      "highlight-point",
+      "tooltip",
+      "highlight-label",
+      "arrow-shaft",
+    ]);
   
-    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary)+10000];
+    const medianDomain = [
+      70000,
+      d3.max(averageSalaries, (d) => d.averageSalary) + 10000,
+    ];
     updateAxes(medianDomain);
   
     svg
@@ -130,45 +138,154 @@
       .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
       .attr("y1", (d) => yScale(d.averageSalary))
       .attr("y2", (d) => yScale(d.averageSalary))
-      .attr("stroke", "red")
+      .attr("stroke", "#ACFAD8")
+      .attr("stroke-width", 2);
+  
+    document.getElementById("vis3main").innerHTML =
+      "Let's start off with the average salary for each university...";
+  
+    // Highlight UBC average salary
+    const ubcAverage = averageSalaries.find((d) => d.Institution === "University of British Columbia (UBC)");
+  
+    if (!ubcAverage) {
+      console.error("UBC data not found in averageSalaries.");
+      return;
+    }
+  
+    const ubcAverageX = xScale(ubcAverage.Institution) + xScale.bandwidth() / 2;
+    const ubcAverageY = yScale(ubcAverage.averageSalary);
+  
+    // Add animated label
+    const labelXOffset = 100; // Horizontal offset from the line
+    const labelYOffset = -10; // Vertical offset from the line
+  
+    svg
+      .append("text")
+      .attr("class", "highlight-label")
+      .attr("x", ubcAverageX + labelXOffset)
+      .attr("y", ubcAverageY + labelYOffset)
+      .attr("opacity", 0) // Start invisible
+      .transition() // Animate appearance
+      .duration(1000)
+      .attr("opacity", 1)
+      .text(
+        `UBC has an average salary of $${d3.format(",.0f")(
+          ubcAverage.averageSalary
+        )}.`
+      )
+      .style("font-size", "14px")
+      .style("fill", "white");
+  
+    // Add arrow shaft
+    svg
+      .append("line")
+      .attr("class", "arrow-shaft")
+      .attr("x1", ubcAverageX + labelXOffset - 10) // Adjust for label alignment
+      .attr("y1", ubcAverageY + labelYOffset)
+      .attr("x2", ubcAverageX + 25) // Point to the UBC average salary line
+      .attr("y2", ubcAverageY)
+      .attr("stroke", "white")
       .attr("stroke-width", 2)
-      .raise();
-  }
+      .attr("opacity", 0) // Start invisible
+      .transition() // Animate appearance
+      .duration(2000)
+      .attr("opacity", 1)
+      .attr("marker-end", "url(#arrowhead)");
+  
+    // Define arrowhead marker
+    svg
+      .append("defs")
+      .append("marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "0 0 10 10")
+      .attr("refX", 10) // Position the arrowhead at the end of the line
+      .attr("refY", 5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M 0 0 L 10 5 L 0 10 Z") // Triangle shape
+      .attr("fill", "white");
+  }  
   
 
   function highlightEntryClosestToUBCAverage() {
-    clearElements(["scatter-point", "highlight-point", "tooltip", "median-line-updated"]);
+    clearElements(["scatter-point", "highlight-point", "tooltip", "median-line-updated", "highlight-label", "arrow-shaft"]);
   
     const ubcAverage = filteredDataSalaries.find((d) => d.Name === "Abel-Co, Karen");
-    
-    // need to implement dynamically getting ubc closest to average only in ubc
-    // const ubcAverage = averageSalaries.find((d) => d.Institution === "University of British Columbia (UBC)").averageSalary;
-    // const closestEntry = filteredDataSalaries.reduce((prev, curr) =>
-    //   Math.abs(curr.salary - ubcAverage) < Math.abs(prev.salary - ubcAverage) ? curr : prev
-    // );
+    if (!ubcAverage) {
+      console.error("Karen Abel-Co's data not found.");
+      return;
+    }
   
-    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary)+10000];
+    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary) + 10000];
     updateAxes(medianDomain);
   
+    const highlightX = xScale(ubcAverage.Agency) + xScale.bandwidth() / 2;
+    const highlightY = yScale(ubcAverage.salary);
+  
+    // Highlight the point
     svg
-      .append("circle")
-      .attr("class", "highlight-point")
-      .attr("cx", xScale(ubcAverage.Agency) + xScale.bandwidth() / 2)
-      .attr("cy", yScale(ubcAverage.salary))
-      .attr("r", 8)
-      .attr("fill", "blue");
+    .append("circle")
+    .attr("class", "highlight-point")
+    .attr("cx", highlightX)
+    .attr("cy", highlightY)
+    .attr("r", 8)
+    .attr("fill", "#79D0B4");
+
+    // Add animated label
+    const labelXOffset = 100; // Horizontal offset from the point
+    const labelYOffset = -5; // Vertical offset from the point
+    const arrowOffset = 5; // Offset for the arrow from the label
+
+    // Label text
+    svg
+    .append("text")
+    .attr("class", "highlight-label")
+    .attr("x", highlightX + labelXOffset)
+    .attr("y", highlightY + labelYOffset)
+    .attr("opacity", 0) // Start invisible
+    .transition() // Animate appearance
+    .duration(1000)
+    .attr("opacity", 1)
+    .text(
+      `This is Karen Abel-Co with a salary of $${d3.format(",.0f")(ubcAverage.salary)}.`
+    )
+    .style("font-size", "14px")
+    .style("fill", "white");
+
+    // Add arrow shaft
+    svg
+    .append("line")
+    .attr("class", "arrow-shaft")
+    .attr("x1", highlightX + labelXOffset - arrowOffset)
+    .attr("y1", highlightY + labelYOffset - 5) // Adjust for alignment
+    .attr("x2", highlightX + 10) // Point to the highlighted point
+    .attr("y2", highlightY)
+    .attr("stroke", "white")
+    .attr("stroke-width", 2)
+    .attr("opacity", 0) // Start invisible
+    .transition() // Animate appearance
+    .duration(2000)
+    .attr("opacity", 1)
+    .attr("marker-end", "url(#arrowhead)"); // Add arrowhead marker
+
+    // Define arrowhead marker
+    svg
+    .append("defs")
+    .append("marker")
+    .attr("id", "arrowhead")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10) // Position the arrowhead at the end of the line
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 Z") // Triangle shape
+    .attr("fill", "white");
   
-    // svg
-    //   .append("line")
-    //   .attr("class", "highlight-line")
-    //   .attr("x1", xScale(closestEntry.Agency) + xScale.bandwidth() / 2)
-    //   .attr("x2", xScale("University of British Columbia (UBC)") + xScale.bandwidth() / 2)
-    //   .attr("y1", yScale(closestEntry.salary))
-    //   .attr("y2", yScale(ubcMedian))
-    //   .attr("stroke", "black")
-    //   .attr("stroke-dasharray", "4 2")
-    //   .attr("stroke-width", 2);
-  
+    // Draw and animate median lines
     svg
       .selectAll(".median-line")
       .data(averageSalaries)
@@ -180,13 +297,16 @@
       .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
       .attr("y1", (d) => yScale(d.averageSalary))
       .attr("y2", (d) => yScale(d.averageSalary))
-      .attr("stroke", "red")
-      .attr("stroke-width", 2)
-      .raise();
+      .attr("stroke", "#ACFAD8")
+      .attr("stroke-width", 2);
+    
+      // Text
+      document.getElementById("vis3main").innerHTML = "Let's look closer at the entry closest to the UBC average.";
   }
   
+  
   function drawAllEntriesWithTooltips() {
-    clearElements(["highlight-point", "highlight-line", "tooltip", "median-line-updated"]);
+    clearElements(["highlight-point", "highlight-line", "tooltip", "median-line-updated", "highlight-label", "arrow-shaft"]);
   
     // const salaryDomain = [0, d3.max(filteredDataSalaries, (d) => d.salary)];
     // updateAxes(salaryDomain);
@@ -202,7 +322,7 @@
       .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
       .attr("cy", (d) => yScale(d.salary))
       .attr("r", 5)
-      .attr("fill", "steelblue")
+      .attr("fill", "#519FAB")
       .lower();
   
     addHoverEffects(points);
@@ -218,9 +338,45 @@
       .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
       .attr("y1", (d) => yScale(d.averageSalary))
       .attr("y2", (d) => yScale(d.averageSalary))
-      .attr("stroke", "red")
-      .attr("stroke-width", 2)
-      .raise();
+      .attr("stroke", "#ACFAD8")
+      .attr("stroke-width", 2);
+      
+    const defs = svg.append("defs");
+
+    const gradient = defs.append("linearGradient")
+      .attr("id", "vertical-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "0%")
+      .attr("y2", "100%");
+
+    gradient.append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "#17212E")
+      .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#17212E")
+      .attr("stop-opacity", 0);
+
+    // Clear existing rectangles
+    svg.selectAll(".cap-rect").remove();
+
+    // Draw the rectangle
+    svg
+      .append("rect")
+      .attr("class", "cap-rect")
+      .attr("x", 0)
+      .attr("width", width)
+      .attr("y", 0)
+      .attr("height", margin.top)
+      .attr("fill", "url(#vertical-gradient)")
+      .raise(); // Ensure rectangle is on top
+  
+    // Text
+    document.getElementById("vis3main").innerHTML = "Okay, how about the rest of the faculty?";
+
   }
   
   function adjustYScaleForTopUBCSalary() {
@@ -239,7 +395,7 @@
       .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
       .attr("cy", (d) => yScale(d.salary))
       .attr("r", 5)
-      .attr("fill", "steelblue");
+      .attr("fill", "#519FAB");
   
     addHoverEffects(points);
 
@@ -254,9 +410,11 @@
       .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
       .attr("y1", (d) => yScale(d.averageSalary))
       .attr("y2", (d) => yScale(d.averageSalary))
-      .attr("stroke", "red")
-      .attr("stroke-width", 2)
-      .raise();
+      .attr("stroke", "#ACFAD8")
+      .attr("stroke-width", 2);
+    
+    // Text
+    document.getElementById("vis3main").innerHTML = "That's much better! We can see the rest of the chart.";
   }
   
   function filterToTop10FromEachUniversity() {
@@ -280,9 +438,16 @@
       .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
       .attr("cy", (d) => yScale(d.salary))
       .attr("r", 5)
-      .attr("fill", "steelblue");
+      .attr("fill", "#519FAB");
   
     addHoverEffects(points);
+    
+    // Text
+    document.getElementById("vis3main").innerHTML = "Filtering this data for the top 10 highest paid faculty members shows us something interesting...";
+  }
+  
+  function clear() {
+    clearElements(["scatter-point", "highlight-point", "median-line", "tooltip"]);
   }
   
 
@@ -292,6 +457,7 @@
   window.allEntriesVis3 = drawAllEntriesWithTooltips;
   window.adjustYScaleVis3 = adjustYScaleForTopUBCSalary;
   window.filterVis3 = filterToTop10FromEachUniversity;
+  window.clearVis3 = clear;
 
   // Draw initial chart
   drawAverageSalaryLines();
