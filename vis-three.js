@@ -72,6 +72,21 @@
       .tickFormat((d) => d.length > 15 ? d.slice(0, 15) + "..." : d)
       .tickPadding(10);
   const yAxis = d3.axisLeft(yScale);
+  
+  // Define arrowhead marker
+  svg
+    .append("defs")
+    .append("marker")
+    .attr("id", "arrowhead")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10) // Position the arrowhead at the end of the line
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 Z") // Triangle shape
+    .attr("fill", "white");
 
   function updateAxes(newYDomain, transitionDuration = 1000) {
     yScale.domain(newYDomain);
@@ -191,21 +206,6 @@
       .duration(2000)
       .attr("opacity", 1)
       .attr("marker-end", "url(#arrowhead)");
-  
-    // Define arrowhead marker
-    svg
-      .append("defs")
-      .append("marker")
-      .attr("id", "arrowhead")
-      .attr("viewBox", "0 0 10 10")
-      .attr("refX", 10) // Position the arrowhead at the end of the line
-      .attr("refY", 5)
-      .attr("markerWidth", 6)
-      .attr("markerHeight", 6)
-      .attr("orient", "auto")
-      .append("path")
-      .attr("d", "M 0 0 L 10 5 L 0 10 Z") // Triangle shape
-      .attr("fill", "white");
   }  
   
 
@@ -269,21 +269,6 @@
     .duration(2000)
     .attr("opacity", 1)
     .attr("marker-end", "url(#arrowhead)"); // Add arrowhead marker
-
-    // Define arrowhead marker
-    svg
-    .append("defs")
-    .append("marker")
-    .attr("id", "arrowhead")
-    .attr("viewBox", "0 0 10 10")
-    .attr("refX", 10) // Position the arrowhead at the end of the line
-    .attr("refY", 5)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-    .append("path")
-    .attr("d", "M 0 0 L 10 5 L 0 10 Z") // Triangle shape
-    .attr("fill", "white");
   
     // Draw and animate median lines
     svg
@@ -300,18 +285,15 @@
       .attr("stroke", "#ACFAD8")
       .attr("stroke-width", 2);
     
-      // Text
-      document.getElementById("vis3main").innerHTML = "Let's look closer at the entry closest to the UBC average.";
+    // Text
+    document.getElementById("vis3main").innerHTML = "Let's look closer at the entry closest to the UBC average.";
   }
   
   
   function drawAllEntriesWithTooltips() {
     clearElements(["highlight-point", "highlight-line", "tooltip", "median-line-updated", "highlight-label", "arrow-shaft"]);
   
-    // const salaryDomain = [0, d3.max(filteredDataSalaries, (d) => d.salary)];
-    // updateAxes(salaryDomain);
-  
-    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary)+10000];
+    const medianDomain = [70000, d3.max(averageSalaries, (d) => d.averageSalary) + 10000];
     updateAxes(medianDomain);
   
     const points = svg
@@ -340,7 +322,90 @@
       .attr("y2", (d) => yScale(d.averageSalary))
       .attr("stroke", "#ACFAD8")
       .attr("stroke-width", 2);
-      
+  
+    // Add arrows and messages for UBC, SFU, UVic
+    const institutions = ["University of British Columbia (UBC)", "Simon Fraser University (SFU)", "University of Victoria"];
+    institutions.forEach((institution) => {
+        const institutionX = xScale(institution) + xScale.bandwidth() / 2; // X position of the institution
+        const institutionY = margin.top; // Y position at the top (margin.top)
+  
+        // Add the arrow shaft
+        svg
+          .append("line")
+          .attr("class", "arrow-shaft")
+          .attr("x1", institutionX + 40)
+          .attr("y1", institutionY + 30)
+          .attr("x2", institutionX + 10)
+          .attr("y2", institutionY - 20) // Adjust to point upwards
+          .attr("stroke", "white")
+          .attr("stroke-width", 2)
+          .attr("opacity", 0) // Start invisible
+          .transition() // Animate appearance
+          .duration(2000)
+          .attr("opacity", 1)
+          .attr("marker-end", "url(#arrowhead)"); // Add arrowhead marker
+
+        if (institution == "University of Victoria") {
+          // Add background rectangle for the message (to improve readability)
+          svg
+            .append("rect")
+            .attr("class", "highlight-label")
+            .attr("x", institutionX - 250)
+            .attr("y", institutionY + 35)
+            .attr("width", 400)
+            .attr("height", 85)
+            .attr("fill", "rgba(21, 31, 44, 0.8)") // Semi-transparent background
+            .attr("opacity", 0) // Start invisible
+            .transition() // Animate appearance
+            .duration(1000)
+            .attr("opacity", 1)
+            .attr("rx", 10) // Rounded corners
+            .attr("ry", 10); // Rounded corners
+          // Add message text
+          svg
+            .append("text")
+            .attr("class", "highlight-label")
+            .attr("x", institutionX - 50)
+            .attr("y", institutionY + 55) // Position the message just above the arrow
+            .attr("opacity", 0) // Start invisible
+            .transition() // Animate appearance
+            .duration(1000)
+            .attr("opacity", 1)
+            .text("There seems to be a lot more entries in these universities...")
+            .style("font-size", "12px")
+            .style("fill", "white")
+            .style("text-anchor", "middle"); // Center the text
+          // Add message text
+          svg
+            .append("text")
+            .attr("class", "highlight-label")
+            .attr("x", institutionX - 50)
+            .attr("y", institutionY + 80) // Position the message just above the arrow
+            .attr("opacity", 0) // Start invisible
+            .transition() // Animate appearance
+            .duration(1000)
+            .attr("opacity", 1)
+            .text("This is because these universities have some very highly paid faculty.")
+            .style("font-size", "12px")
+            .style("fill", "white")
+            .style("text-anchor", "middle"); // Center the text
+          svg
+            .append("text")
+            .attr("class", "highlight-label")
+            .attr("x", institutionX - 50)
+            .attr("y", institutionY + 105) // Position the message just above the arrow
+            .attr("opacity", 0) // Start invisible
+            .transition() // Animate appearance
+            .duration(1000)
+            .attr("opacity", 1)
+            .text("Let's redraw the chart to have a scale that shows the rest!")
+            .style("font-size", "12px")
+            .style("fill", "white")
+            .style("text-anchor", "middle"); // Center the text
+        }
+  
+    });
+
     const defs = svg.append("defs");
 
     const gradient = defs.append("linearGradient")
@@ -375,12 +440,11 @@
       .raise(); // Ensure rectangle is on top
   
     // Text
-    document.getElementById("vis3main").innerHTML = "Okay, how about the rest of the faculty?";
-
-  }
+    document.getElementById("vis3main").innerHTML = "But when we add the rest of the entries, it doesn't fit on the chart...";
+}
   
   function adjustYScaleForTopUBCSalary() {
-    clearElements(["scatter-point", "median-line"]);
+    clearElements(["scatter-point", "median-line", "highlight-label", "arrow-shaft"]);
   
     // const ubcSalaries = filteredDataSalaries.filter((d) => d.Agency === "University of British Columbia (UBC)");
     // const maxUBCSalary = d3.max(ubcSalaries, (d) => d.salary);
@@ -418,7 +482,7 @@
   }
   
   function filterToTop10FromEachUniversity() {
-    clearElements(["scatter-point", "highlight-point", "tooltip", "median-line-updated"]);
+    clearElements(["scatter-point", "highlight-point", "tooltip", "median-line-updated", "highlight-label", "arrow-shaft"]);
   
     const top10PerUniversity = universities.flatMap((uni) => {
       return filteredDataSalaries
@@ -447,7 +511,7 @@
   }
   
   function clear() {
-    clearElements(["scatter-point", "highlight-point", "median-line", "tooltip"]);
+    clearElements(["scatter-point", "highlight-point", "median-line", "tooltip", "highlight-label", "arrow-shaft"]);
   }
   
 
