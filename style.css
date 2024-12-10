@@ -43,7 +43,7 @@ body {
   width: 50%;
 }
 
-.right-column {
+.right-column-arr {
   flex: 1; 
   display: flex;
   justify-content: flex-end; 
