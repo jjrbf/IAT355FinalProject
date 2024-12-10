@@ -79,7 +79,7 @@ const handleInitialHash = () => {
   }
   // implement it to go back to original
   // if (index < 3)
-  if (index >= 3) redrawVis1();
+  // if (index >= 3) redrawVis1();
 };
 
 // Handle scroll for desktop

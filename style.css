@@ -286,6 +286,14 @@ p {
   font-weight: 600;
 }
 
+.vis3-vis-container {
+  display: flex;
+}
+
+#vis3ContainerSupplementary {
+  width: 100%;
+}
+
 #tooltip {
   position: absolute;
   background-color: white;
