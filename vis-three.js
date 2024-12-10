@@ -443,43 +443,230 @@
     document.getElementById("vis3main").innerHTML = "But when we add the rest of the entries, it doesn't fit on the chart...";
 }
   
-  function adjustYScaleForTopUBCSalary() {
-    clearElements(["scatter-point", "median-line", "highlight-label", "arrow-shaft"]);
-  
-    // const ubcSalaries = filteredDataSalaries.filter((d) => d.Agency === "University of British Columbia (UBC)");
-    // const maxUBCSalary = d3.max(ubcSalaries, (d) => d.salary);
-    const salaryDomain = [0, d3.max(filteredDataSalaries, (d) => d.salary)];
-    updateAxes(salaryDomain);
-  
-    const points = svg
-      .selectAll(".scatter-point")
-      .data(filteredDataSalaries)
-      .join("circle")
-      .attr("class", "scatter-point")
-      .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
-      .attr("cy", (d) => yScale(d.salary))
-      .attr("r", 5)
-      .attr("fill", "#519FAB");
-  
-    addHoverEffects(points);
+function adjustYScaleForTopUBCSalary() { // need to implement hover effects
+  clearElements(["scatter-point", "median-line", "highlight-label", "arrow-shaft"]);
+
+  const salaryDomain = [0, d3.max(filteredDataSalaries, (d) => d.salary)];
+  updateAxes(salaryDomain);
+
+  // Filter UBC entries with salary above 500k
+  const ubcTopSalaries = filteredDataSalaries.filter(
+    (d) => d.Agency === "University of British Columbia (UBC)" && d.salary > 500000
+  );
+
+  // Find the top and lowest salary above 500k at UBC
+  const topUBC = d3.max(ubcTopSalaries, (d) => d.salary);
+  const lowestUBC = d3.min(ubcTopSalaries, (d) => d.salary);
+
+  const points = svg
+    .selectAll(".scatter-point")
+    .data(filteredDataSalaries)
+    .join("circle")
+    .attr("class", "scatter-point")
+    .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
+    .attr("cy", (d) => yScale(d.salary))
+    .attr("r", 5)
+    .attr("fill", "#519FAB");
+
+  addHoverEffects(points);
+
+  svg
+    .selectAll("median-line-updated")
+    .data(averageSalaries)
+    .join("line")
+    .attr("class", "median-line-updated")
+    .transition()
+    .duration(1000)
+    .attr("x1", (d) => xScale(d.Institution))
+    .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
+    .attr("y1", (d) => yScale(d.averageSalary))
+    .attr("y2", (d) => yScale(d.averageSalary))
+    .attr("stroke", "#ACFAD8")
+    .attr("stroke-width", 2);
+
+  // Message Position
+  const messageX = (width / 4) + 50;
+  const messageY = (height / 4) - 10;
+
+  // Add the message text
+  svg
+    .append("text")
+    .attr("class", "highlight-label")
+    .attr("x", messageX + 10)
+    .attr("y", messageY - 15)
+    .attr("opacity", 0) // Start invisible
+    .transition() // Animate appearance
+    .duration(1000)
+    .attr("opacity", 1)
+    .text("UBC's top salaries TOWER over other top salaries at other universities!")
+    .style("font-size", "14px")
+    .style("fill", "white")
+    .style("text-anchor", "left"); // Left-align text
+  svg
+    .append("text")
+    .attr("class", "highlight-label")
+    .attr("x", messageX + 10)
+    .attr("y", messageY + 5)
+    .attr("opacity", 0) // Start invisible
+    .transition() // Animate appearance
+    .duration(1000)
+    .attr("opacity", 1)
+    .text("Below is the difference in salary between the 9th most-paid UBC faculty")
+    .style("font-size", "14px")
+    .style("fill", "white")
+    .style("text-anchor", "left"); // Left-align text
+  svg
+    .append("text")
+    .attr("class", "highlight-label")
+    .attr("x", messageX + 10)
+    .attr("y", messageY + 25)
+    .attr("opacity", 0) // Start invisible
+    .transition() // Animate appearance
+    .duration(1000)
+    .attr("opacity", 1)
+    .text("compared to the top person at each university.")
+    .style("font-size", "14px")
+    .style("fill", "white")
+    .style("text-anchor", "left"); // Left-align text
+
+  // Bracket-style Arrow pointing to UBC's top and lowest salary above 500k
+  svg
+    .append("line")
+    .attr("class", "highlight-label")
+    .attr("x1", xScale("University of British Columbia (UBC)") + 80)
+    .attr("y1", messageY)
+    .attr("x2", xScale("University of British Columbia (UBC)") + 80)
+    .attr("y2", yScale(topUBC))
+    .attr("stroke", "white")
+    .attr("stroke-width", 2)
+    .attr("opacity", 0) // Lower opacity for initial state
+    .transition()
+    .duration(2000)
+    .attr("opacity", 1);
+
+  svg
+    .append("line")
+    .attr("class", "highlight-label")
+    .attr("x1", xScale("University of British Columbia (UBC)") + 80)
+    .attr("y1", messageY)
+    .attr("x2", xScale("University of British Columbia (UBC)") + 80)
+    .attr("y2", yScale(lowestUBC))
+    .attr("stroke", "white")
+    .attr("stroke-width", 2)
+    .attr("opacity", 0) // Lower opacity for initial state
+    .transition()
+    .duration(2000)
+    .attr("opacity", 1);
+
+  svg
+    .append("line")
+    .attr("class", "highlight-label")
+    .attr("x1", xScale("University of British Columbia (UBC)") + 80)
+    .attr("y1", messageY)
+    .attr("x2", messageX)
+    .attr("y2", messageY)
+    .attr("stroke", "white")
+    .attr("stroke-width", 2)
+    .attr("opacity", 0) // Lower opacity for initial state
+    .transition()
+    .duration(2000)
+    .attr("opacity", 1)
+    .attr("marker-end", "url(#arrowhead)");
+
+  // Draw a line connecting the top and lowest salary at UBC to form the bracket
+  svg
+    .append("line")
+    .attr("class", "highlight-label")
+    .attr("x1", xScale("University of British Columbia (UBC)") + 40) // Create the horizontal line for the bracket
+    .attr("y1", yScale(topUBC))
+    .attr("x2", xScale("University of British Columbia (UBC)") + 80)
+    .attr("y2", yScale(topUBC))
+    .attr("stroke", "white")
+    .attr("stroke-width", 2)
+    .attr("opacity", 0) // Lower opacity for initial state
+    .transition()
+    .duration(2000)
+    .attr("opacity", 1);
+
+  svg
+    .append("line")
+    .attr("class", "highlight-label")
+    .attr("x1", xScale("University of British Columbia (UBC)") + 40) // Create the horizontal line for the bracket
+    .attr("y1", yScale(lowestUBC))
+    .attr("x2", xScale("University of British Columbia (UBC)") + 80)
+    .attr("y2", yScale(lowestUBC))
+    .attr("stroke", "white")
+    .attr("stroke-width", 2)
+    .attr("opacity", 0) // Lower opacity for initial state
+    .transition()
+    .duration(2000)
+    .attr("opacity", 1);
+
+  // Add lower opacity arrows for the difference calculations
+  const institutions = ["Simon Fraser University (SFU)", "BCIT", "University of Victoria", "Kwantlen Polytechnic University",
+    "Vancouver Community College (VCC)",
+    "Langara College",
+    "Douglas College",
+    "Justice Institute of B.C.",
+    "University of the Fraser Valley",];
+  institutions.forEach((institution) => {
+    const institutionSalaries = filteredDataSalaries.filter(
+      (d) => d.Agency === institution
+    );
+    const topInstitutionSalary = d3.max(institutionSalaries, (d) => d.salary);
+
+    // Calculate the difference between the top salary of the institution and UBC's lowest salary above 500k
+    const salaryDifference = topInstitutionSalary - lowestUBC;
+
+    // Add arrows showing the difference
+    svg
+      .append("line")
+      .attr("class", "highlight-label")
+      .attr("x2", xScale(institution) + xScale.bandwidth() / 2)
+      .attr("y2", yScale(topInstitutionSalary) - 10)
+      .attr("x1", xScale(institution) + xScale.bandwidth() / 2)
+      .attr("y1", yScale(lowestUBC))
+      .attr("opacity", 0) // Lower opacity for initial state
+      .transition()
+      .duration(2000)
+      .attr("opacity", 1)
+      .attr("stroke", "#425856")
+      .attr("stroke-width", 1)
+      .attr("marker-end", "url(#arrowhead)");
 
     svg
-      .selectAll("median-line-updated")
-      .data(averageSalaries)
-      .join("line")
-      .attr("class", "median-line-updated")
+      .append("line")
+      .attr("class", "highlight-label")
+      .attr("x2", xScale("University of British Columbia (UBC)") + 80)
+      .attr("y2", yScale(lowestUBC))
+      .attr("x1", xScale(institution) + xScale.bandwidth() / 2)
+      .attr("y1", yScale(lowestUBC))
+      .attr("opacity", 0) // Lower opacity for initial state
       .transition()
-      .duration(1000)
-      .attr("x1", (d) => xScale(d.Institution))
-      .attr("x2", (d) => xScale(d.Institution) + xScale.bandwidth())
-      .attr("y1", (d) => yScale(d.averageSalary))
-      .attr("y2", (d) => yScale(d.averageSalary))
-      .attr("stroke", "#ACFAD8")
-      .attr("stroke-width", 2);
-    
-    // Text
-    document.getElementById("vis3main").innerHTML = "That's much better! We can see the rest of the chart.";
-  }
+      .duration(2000)
+      .attr("opacity", 1)
+      .attr("stroke", "#425856")
+      .attr("stroke-width", 1);
+
+    // Add labels showing the difference
+    svg
+      .append("text")
+      .attr("class", "highlight-label")
+      .attr("x", (xScale(institution) + xScale.bandwidth() / 2) + 10)
+      .attr("y", yScale((topInstitutionSalary + lowestUBC)/2))
+      .attr("opacity", 0) // Lower opacity for initial state
+      .transition()
+      .duration(2000)
+      .attr("opacity", 1)
+      .text(`${salaryDifference}`)
+      .style("font-size", "12px")
+      .style("fill", "#425856");
+  });
+
+  // Text
+  document.getElementById("vis3main").innerHTML =
+    "That's much better! We can see the rest of the chart.";
+}
   
   function filterToTop10FromEachUniversity() {
     clearElements(["scatter-point", "highlight-point", "tooltip", "median-line-updated", "highlight-label", "arrow-shaft"]);
