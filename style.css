@@ -317,8 +317,64 @@ p {
   gap: 4rem;
 }
 
+/* Input Container Styling */
 .input-container {
-  place-items: flex-start;
+  margin-top: 20px;
+  text-align: left;
+  font-family: Arial, sans-serif;
+}
+
+/* Label Styling */
+.search-label {
+  font-size: 16px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Search Box Styling */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+/* Input Field Styling */
+.search-box input {
+  width: 300px;
+  height: 40px;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+  background-color: #17212E;
+  color: #ffffff;
+  padding: 0 10px;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-box input::placeholder {
+  color: #ffffff;
+  opacity: 0.6;
+}
+
+/* Button Styling */
+.search-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #49a9c9;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #3b8aa0;
 }
 
 /* CONCLUSION STYLING */

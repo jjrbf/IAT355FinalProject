@@ -76,7 +76,7 @@
                     </figure>
                 </div>
                 <div class="vis2-text-container" id="first-step">
-                    <p class="vis2-text">UBC spends an overwhelming 1.9 billion dollars, three quarters of its annual operational budget on salaries and benefits for its staff.</p>
+                    <p class="vis2-text">UBC spends an overwhelming 1.8 billion dollars, three quarters of its annual operational budget, on salaries and benefits for its staff.</p>
                     <p class="vis2-text white">Looks like that money does go to the staff, but probing further, something is off...</p>
                 </div>
                 <div class="vis2-text-container hidden" id="second-step">
@@ -162,9 +162,14 @@
                 <div id="vis4Container"></div>
             </div>
             <div class="input-container">
-                <label for="vis4faculty">Search for a faculty member:</label>
-                <input type="search" name="facultySearch" id="vis4faculty">
-                <!-- implement showing where they're from here -->
+                <label for="vis4faculty" class="search-label">Search by name:</label>
+                <div class="search-box">
+                    <input type="search" name="facultySearch" id="vis4faculty" placeholder="">
+                    <button type="submit" class="search-button">
+                        Search
+                    </button>
+                    <!-- implement showing where they're from here -->
+                </div>
             </div>
         </div>
         <div class="full centerPg s14" data-step="15" id="search">

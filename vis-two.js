@@ -66,11 +66,10 @@
         .append("g")
         .attr("class", "arc");
 
-      const defaultCategory = expenseCategories[0]; // Highlight `Salaries and Benefits` by default
-
       arcs
         .append("path")
         .attr("d", arc)
+        .attr("d", (d) => (d.data.label === "Salaries and Benefits" ? arcHover(d) : arc(d)))
         .attr("fill", (d) => d.data.color)
         .on("mouseover", function (event, d) {
           d3.select(this)
@@ -112,6 +111,8 @@
         .style("font-size", "16px")
         .style("fill", "#686E77")
         .text(uni.name);
+
+      
     });
   }
 

@@ -699,145 +699,179 @@ const colorScale = d3
   .domain(d3.range(1, 11)) // Match ranks 1 to 10
   .range(customColors);
   
-function filterToTop10FromEachUniversity() {
-  clearElements(["scatter-point", "highlight-point", "tooltip", "median-line", "median-line-updated", "highlight-label", "arrow-shaft"]);
-
-  const top10PerUniversity = universities.flatMap((uni) => {
-    return filteredDataSalaries
-      .filter((d) => d.Agency === uni)
-      .sort((a, b) => b.salary - a.salary)
-      .slice(0, 10)
-      .map((d, i) => ({ ...d, rank: i + 1 })); // Add rank for stacking
-  });
-
-  const salaryDomain = [0, d3.max(top10PerUniversity, (d) => d.salary)];
-  updateAxes(salaryDomain);
-
-  const points = svg
-    .selectAll(".scatter-point")
-    .data(top10PerUniversity)
-    .join("circle")
-    .attr("class", "scatter-point")
-    .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
-    .attr("cy", (d) => yScale(d.salary))
-    .attr("r", 5)
-    .attr("fill", "#519FAB");
-
-  addHoverEffects(points);
-
-  // Create a stacked bar chart in the #vis3ContainerSupplementary
-  const container = d3.select("#vis3ContainerSupplementary");
-  container.selectAll("*").remove(); // Clear any previous content
-
-  let lastHoveredUniversity = "Simon Fraser University (SFU)"; // Default to SFU
-
-  function updateStackedBarChart(entry) {
-    const filteredUniversities = ["University of British Columbia (UBC)", lastHoveredUniversity];
-    const filteredData = top10PerUniversity.filter((d) =>
-      filteredUniversities.includes(d.Agency)
-    );
-
-    // Margins
-    const margin = { top: 40, right: 30, bottom: 80, left: 70 };
-    const supplementaryWidth = container.node().getBoundingClientRect().width;
-    const supplementaryHeight = 500; // Fixed height
-
-    const width = supplementaryWidth - margin.left - margin.right;
-    const height = supplementaryHeight - margin.top - margin.bottom;
-
-    container.selectAll("*").remove(); // Clear previous content
-
-    const svgSupplementary = container
-      .append("svg")
-      .attr("width", supplementaryWidth)
-      .attr("height", supplementaryHeight)
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // Scales
-    const xScaleSupplementary = d3
-      .scaleBand()
-      .domain(filteredUniversities)
-      .range([0, width])
-      .padding(0.5);
-
-    const yScaleSupplementary = d3
-      .scaleLinear()
-      .domain([0, 6000000])
-      .range([height, 0]);
-
-    const groupedData = d3.group(filteredData, (d) => d.Agency);
-
-    const stack = d3.stack().keys(d3.range(1, 11));
-    const stackedData = stack(
-      Array.from(groupedData, ([key, values]) => ({
-        Agency: key,
-        ...Object.fromEntries(values.map((d) => [d.rank, d.salary])),
-      }))
-    );
-
-    // Bars
-    svgSupplementary
-      .selectAll(".bar-group")
-      .data(stackedData)
-      .join("g")
-      .attr("class", "bar-group")
-      .attr("fill", (d, i) => colorScale(i + 1))
-      .selectAll("rect")
-      .data((d) => d)
-      .join("rect")
-      .attr("x", (d) => xScaleSupplementary(d.data.Agency))
-      .attr("y", (d) => yScaleSupplementary(d[1]))
-      .attr("height", (d) => yScaleSupplementary(d[0]) - yScaleSupplementary(d[1]))
-      .attr("width", xScaleSupplementary.bandwidth())
-      .attr("class", (d, i) => `bar-${d.data.Agency.replace(/\s+/g, "-")}-${i + 1}`)
-      .attr("opacity", 0.8);
-
-    // Axes
-    svgSupplementary
-      .append("g")
-      .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(xScaleSupplementary));
-
-    svgSupplementary.append("g").call(d3.axisLeft(yScaleSupplementary));
-  }
-
-  // Hover effect for scatter points
-  points
-    .on("mouseover", function (event, d) {
-      if (d.Agency != "University of British Columbia (UBC)") lastHoveredUniversity = d.Agency;
-      updateStackedBarChart(d);
-
-      d3.select(this)
-        .attr("opacity", 1)
-        .attr("stroke", "black")
-        .attr("stroke-width", 2);
-
-      d3.select("#tooltip")
-        .style("opacity", 1)
-        .style("left", `${event.pageX + 10}px`)
-        .style("top", `${event.pageY - 10}px`)
-        .html(
-          `Name: ${d.Name || "Unavailable"}<br>Salary: $${d3.format(
-            ",.2f"
-          )(d.salary)}<br>Position: ${d.Position || "Unavailable"}`
-        );
-    })
-    .on("mouseout", function () {
-      d3.select(this).attr("opacity", 0.3).attr("stroke", null);
-      d3.select("#tooltip").style("opacity", 0);
+  function filterToTop10FromEachUniversity() {
+    clearElements(["scatter-point", "highlight-point", "tooltip", "median-line", "median-line-updated", "highlight-label", "arrow-shaft"]);
+  
+    const top10PerUniversity = universities.flatMap((uni) => {
+      return filteredDataSalaries
+        .filter((d) => d.Agency === uni)
+        .sort((a, b) => b.salary - a.salary)
+        .slice(0, 10)
+        .map((d, i) => ({
+          ...d,
+          rank: i + 1,       // Add rank for stacking
+          name: d.Name,      // Include Name
+          position: d.Position, // Include Position
+        }));
     });
-
-  // Initial render
-  updateStackedBarChart();
-
-  // show
-  d3.select("#vis3ContainerSupplementary").classed("hidden", false);
-
-  // Update main text
-  document.getElementById("vis3main").innerHTML =
-    "Filtering this data for the top 10 highest-paid faculty members shows us something interesting...";
-}
+  
+    const salaryDomain = [0, d3.max(top10PerUniversity, (d) => d.salary)];
+    updateAxes(salaryDomain);
+  
+    const points = svg
+      .selectAll(".scatter-point")
+      .data(top10PerUniversity)
+      .join("circle")
+      .attr("class", "scatter-point")
+      .attr("cx", (d) => xScale(d.Agency) + xScale.bandwidth() / 2)
+      .attr("cy", (d) => yScale(d.salary))
+      .attr("r", 5)
+      .attr("fill", "#519FAB");
+  
+    addHoverEffects(points);
+  
+    // Create a stacked bar chart in the #vis3ContainerSupplementary
+    const container = d3.select("#vis3ContainerSupplementary");
+    container.selectAll("*").remove(); // Clear any previous content
+  
+    let lastHoveredUniversity = "Simon Fraser University (SFU)"; // Default to SFU
+  
+    function updateStackedBarChart(entry) {
+      const filteredUniversities = ["University of British Columbia (UBC)", lastHoveredUniversity];
+      const filteredData = top10PerUniversity.filter((d) =>
+        filteredUniversities.includes(d.Agency)
+      );
+  
+      // Margins
+      const margin = { top: 40, right: 30, bottom: 80, left: 70 };
+      const supplementaryWidth = container.node().getBoundingClientRect().width;
+      const supplementaryHeight = 500; // Fixed height
+  
+      const width = supplementaryWidth - margin.left - margin.right;
+      const height = supplementaryHeight - margin.top - margin.bottom;
+  
+      container.selectAll("*").remove(); // Clear previous content
+  
+      const svgSupplementary = container
+        .append("svg")
+        .attr("width", supplementaryWidth)
+        .attr("height", supplementaryHeight)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+  
+      // Scales
+      const xScaleSupplementary = d3
+        .scaleBand()
+        .domain(filteredUniversities)
+        .range([0, width])
+        .padding(0.5);
+  
+      const yScaleSupplementary = d3
+        .scaleLinear()
+        .domain([0, 6000000])
+        .range([height, 0]);
+  
+      const groupedData = d3.group(filteredData, (d) => d.Agency);
+  
+      const stack = d3.stack().keys(d3.range(1, 11));
+      const stackedData = stack(
+        Array.from(groupedData, ([key, values]) => ({
+          Agency: key,
+          ...Object.fromEntries(values.map((d) => [d.rank, d.salary])),
+        }))
+      );
+  
+      // Bars
+      svgSupplementary
+        .selectAll(".bar-group")
+        .data(stackedData)
+        .join("g")
+        .attr("class", "bar-group")
+        .attr("fill", (d, i) => colorScale(i + 1))
+        .selectAll("rect")
+        .data((d) => d)
+        .join("rect")
+        .attr("x", (d) => xScaleSupplementary(d.data.Agency))
+        .attr("y", (d) => yScaleSupplementary(d[1]))
+        .attr("height", (d) => yScaleSupplementary(d[0]) - yScaleSupplementary(d[1]))
+        .attr("width", xScaleSupplementary.bandwidth())
+        .attr("class", (d, i) => `bar-${d.data.Agency.replace(/\s+/g, "-")}-${i + 1}`)
+        .attr("opacity", 0.8)
+        .on("mouseover", function (event, d) {
+          // Tooltip content
+          const salarySum = d[1] - d[0]; // The salary for the current stacked segment
+  
+          // Highlight the hovered bar by changing its color and opacity
+          d3.select(this)
+            .attr("opacity", 1)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+  
+          // Update tooltip content and position
+          d3.select("#tooltip")
+            .style("opacity", 1)
+            .style("left", `${event.pageX + 10}px`)
+            .style("top", `${event.pageY - 10}px`)
+            .html(
+              `Salary: $${d3.format(",.2f")(salarySum)}`
+            );
+        })
+        .on("mouseout", function () {
+          // Reset the appearance of the bar when mouse leaves
+          d3.select(this)
+            .attr("opacity", 0.8)
+            .attr("stroke", null)
+            .attr("stroke-width", null)
+  
+          d3.select("#tooltip").style("opacity", 0); // Hide tooltip
+        });
+  
+      // Axes
+      svgSupplementary
+        .append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScaleSupplementary));
+  
+      svgSupplementary.append("g").call(d3.axisLeft(yScaleSupplementary));
+    }
+  
+    // Hover effect for scatter points
+    points
+      .on("mouseover", function (event, d) {
+        if (d.Agency != "University of British Columbia (UBC)") lastHoveredUniversity = d.Agency;
+        updateStackedBarChart(d);
+  
+        d3.select(this)
+          .attr("opacity", 1)
+          .attr("stroke", "black")
+          .attr("stroke-width", 2);
+  
+        d3.select("#tooltip")
+          .style("opacity", 1)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 10}px`)
+          .html(
+            `Name: ${d.Name || "Unavailable"}<br>Salary: $${d3.format(
+              ",.2f"
+            )(d.salary)}<br>Position: ${d.Position || "Unavailable"}`
+          );
+      })
+      .on("mouseout", function () {
+        d3.select(this).attr("opacity", 0.3).attr("stroke", null);
+        d3.select("#tooltip").style("opacity", 0);
+      });
+  
+    // Initial render
+    updateStackedBarChart();
+  
+    // show
+    d3.select("#vis3ContainerSupplementary").classed("hidden", false);
+  
+    // Update main text
+    document.getElementById("vis3main").innerHTML =
+      "Filtering this data for the top 10 highest-paid faculty members shows us something interesting...";
+  }
+  
   
   function clear() {
     clearElements(["scatter-point", "highlight-point", "median-line", "tooltip", "highlight-label", "arrow-shaft"]);
