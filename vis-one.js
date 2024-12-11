@@ -98,7 +98,10 @@
         .attr("height", yScale.bandwidth())
         .attr("fill", (d) => {
           // Assign ubc a special color so it stands out
-          if (d.Institutions.includes("UBC")) return "#c6c6f4";
+          if (d.Institutions.includes("UBC")) return "#D3D5EB";
+          if (d.Institutions.includes("SFU")) return "#B5111B";
+          if (d.Institutions.includes("BCIT")) return "#003E6B";
+          if (d.Institutions.includes("University of Victoria")) return "#FFFFFF";
           return "#D9D9D9";
         });
     
@@ -207,11 +210,14 @@
         .attr("y", (d) => yScale(d.Institution))
         .attr("width", (d) => xScale(d.avgSalary) - xScale(0))
         .attr("height", yScale.bandwidth())
-        .attr("fill", (d) =>
-          d.Institution === "University of British Columbia (UBC)"
-            ? "#c6c6f4" // Highlight UBC
-            : "#D9D9D9"
-        );
+        .attr("fill", (d) => {
+          // Assign ubc a special color so it stands out
+          if (d.Institution === "University of British Columbia (UBC)") return "#D3D5EB";
+          if (d.Institution === "Simon Fraser University (SFU)") return "#B5111B";
+          if (d.Institution === "BCIT") return "#003E6B";
+          if (d.Institution === "University of Victoria") return "#FFFFFF";
+          return "#D9D9D9";
+        });
     
       // Institution logos
       svg
