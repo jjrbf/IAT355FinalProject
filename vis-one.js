@@ -249,7 +249,7 @@
         .attr("dy", "0.35em")
         .text((d) => `${d3.format("$,.0f")(d.avgSalary)}`)
         .attr("fill", "white")
-        .attr("font-size", "12px");
+        .attr("font-size", "15px");
     
       // Axes
       svg

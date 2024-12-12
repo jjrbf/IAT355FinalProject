@@ -798,22 +798,30 @@ const colorScale = d3
         .attr("class", (d, i) => `bar-${d.data.Agency.replace(/\s+/g, "-")}-${i + 1}`)
         .attr("opacity", 0.8)
         .on("mouseover", function (event, d) {
+          // Salary sum for the current stacked segment
+          const salarySum = d[1] - d[0];
+        
+          // Extract the matching data entry
+          const agencyData = groupedData.get(d.data.Agency);
+          const matchingEntry = agencyData.find((entry) => entry.salary === salarySum);
+        
           // Tooltip content
-          const salarySum = d[1] - d[0]; // The salary for the current stacked segment
-  
+          const name = matchingEntry ? matchingEntry.Name : "Unavailable";
+          const position = matchingEntry ? matchingEntry.Position : "Unavailable";
+        
           // Highlight the hovered bar by changing its color and opacity
           d3.select(this)
             .attr("opacity", 1)
             .attr("stroke", "black")
             .attr("stroke-width", 2);
-  
+        
           // Update tooltip content and position
           d3.select("#tooltip")
             .style("opacity", 1)
             .style("left", `${event.pageX + 10}px`)
             .style("top", `${event.pageY - 10}px`)
             .html(
-              `Salary: $${d3.format(",.2f")(salarySum)}`
+              `Name: ${name}<br>Salary: $${d3.format(",.2f")(salarySum)}<br>Position: ${position}`
             );
         })
         .on("mouseout", function () {
@@ -821,8 +829,8 @@ const colorScale = d3
           d3.select(this)
             .attr("opacity", 0.8)
             .attr("stroke", null)
-            .attr("stroke-width", null)
-  
+            .attr("stroke-width", null);
+        
           d3.select("#tooltip").style("opacity", 0); // Hide tooltip
         });
   
