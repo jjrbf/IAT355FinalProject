@@ -83,21 +83,24 @@ const handleInitialHash = () => {
 };
 
 // Handle scroll for desktop
+let scrollTimeout;
 window.addEventListener('wheel', (event) => {
   if (isScrolling) return;
   isScrolling = true;
 
-  if (event.deltaY > 0) {
-    scrollToStep(currentStep + 1); // Scrolling down
-  } else if (event.deltaY < 0) {
-    scrollToStep(currentStep - 1); // Scrolling up
+  const delta = event.deltaMode === 1 ? event.deltaY * 33 : event.deltaY; // Changes to pixels ?
+
+  if (delta > 10) {
+    scrollToStep(currentStep + 1);
+  } else if (delta < -10) {
+    scrollToStep(currentStep - 1);
   }
 
-  // Allow new scroll after a delay
   setTimeout(() => {
     isScrolling = false;
-  }, 600); // Matches or exceeds the scrollToStep delay
-});
+  }, 600);
+}, { passive: true });
+
 
 // Handle key navigation
 window.addEventListener('keydown', (event) => {
