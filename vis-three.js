@@ -178,7 +178,7 @@
       .append("text")
       .attr("class", "highlight-label")
       .attr("x", ubcAverageX + labelXOffset)
-      .attr("y", ubcAverageY + labelYOffset)
+      .attr("y", ubcAverageY + labelYOffset - 7)
       .attr("opacity", 0) // Start invisible
       .transition() // Animate appearance
       .duration(1000)
@@ -190,6 +190,21 @@
       )
       .style("font-size", "14px")
       .style("fill", "white");
+  
+      svg
+        .append("text")
+        .attr("class", "highlight-label")
+        .attr("x", ubcAverageX + labelXOffset)
+        .attr("y", ubcAverageY + labelYOffset - 7 + 20)
+        .attr("opacity", 0) // Start invisible
+        .transition() // Animate appearance
+        .duration(1000)
+        .attr("opacity", 1)
+        .text(
+          `We'll find out why it's higher than other universities.`
+        )
+        .style("font-size", "14px")
+        .style("fill", "white");
 
     // hide
     d3.select("#vis3ContainerSupplementary").classed("hidden", true);
@@ -292,7 +307,7 @@
     d3.select("#vis3ContainerSupplementary").classed("hidden", true);
     
     // Text
-    document.getElementById("vis3main").innerHTML = "Let's look closer at the entry closest to the UBC average.";
+    document.getElementById("vis3main").innerHTML = "But first, let's look closer at the entry closest to the UBC average.";
   }
   
   
@@ -507,7 +522,7 @@ function adjustYScaleForTopUBCSalary() { // need to implement hover effects
     .transition() // Animate appearance
     .duration(1000)
     .attr("opacity", 1)
-    .text("UBC's top salaries TOWER over other top salaries at other universities!")
+    .text("This empty space this text is in is thanks to this difference in top salaries.")
     .style("font-size", "14px")
     .style("fill", "white")
     .style("text-anchor", "left"); // Left-align text
@@ -533,7 +548,7 @@ function adjustYScaleForTopUBCSalary() { // need to implement hover effects
     .transition() // Animate appearance
     .duration(1000)
     .attr("opacity", 1)
-    .text("compared to the top person at each university.")
+    .text("compared to the top person at each university. It's a 6-figure difference.")
     .style("font-size", "14px")
     .style("fill", "white")
     .style("text-anchor", "left"); // Left-align text
@@ -677,7 +692,7 @@ function adjustYScaleForTopUBCSalary() { // need to implement hover effects
 
   // Text
   document.getElementById("vis3main").innerHTML =
-    "That's much better! We can see the rest of the chart.";
+    "We can see the rest of the chart now. Notice how UBC's top salaries TOWER over the rest.";
 }
 
 const customColors = [
