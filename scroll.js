@@ -5,6 +5,10 @@ let isScrolling = false; // To control the delay
 
 // Create progress bar items
 steps.forEach((step, index) => {
+  step.setAttribute('tabindex', '0');
+  step.addEventListener('focus', () => {
+    scrollToStep(index); // Scroll to the step when focused
+  });
   const progressItem = document.createElement('div');
   progressItem.classList.add('progress-item');
   if (index === 0) progressItem.classList.add('active');
@@ -31,6 +35,16 @@ const updateProgressBar = () => {
   });
 };
 
+// accessibility for screenreaders
+const liveRegion = document.createElement('div');
+liveRegion.setAttribute('aria-live', 'polite');
+liveRegion.setAttribute('class', 'sr-only');
+document.body.appendChild(liveRegion);
+
+const announceStepChange = (index) => {
+  liveRegion.textContent = `Step ${index + 1}: ${steps[index].id || 'Untitled Step'}`;
+};
+
 // Scroll to a specific step
 const scrollToStep = (index) => {
   if (index >= 0 && index < steps.length) {
@@ -41,6 +55,7 @@ const scrollToStep = (index) => {
       if (currentStep == 0) progressBar.classList.add("hide");
       else if (progressBar.classList.contains("hide")) progressBar.classList.remove("hide");
       updateProgressBar();
+      announceStepChange(index);
 
       // Update the hash in the URL
       const stepId = steps[currentStep].id;
@@ -116,6 +131,25 @@ window.addEventListener('keydown', (event) => {
   setTimeout(() => {
     isScrolling = false;
   }, 600); // Matches the scrolling delay
+});
+
+const firstFocusable = steps[0];
+const lastFocusable = steps[steps.length - 1];
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Tab') return;
+
+  const focusedElement = document.activeElement;
+
+  if (event.shiftKey && focusedElement === firstFocusable) {
+    // Shift + Tab at the first step
+    event.preventDefault();
+    lastFocusable.focus(); // Wrap to the last step
+  } else if (!event.shiftKey && focusedElement === lastFocusable) {
+    // Tab at the last step
+    event.preventDefault();
+    firstFocusable.focus(); // Wrap to the first step
+  }
 });
 
 // Handle button clicks
