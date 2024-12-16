@@ -3,6 +3,24 @@ const progressBar = document.getElementById('progress-bar');
 let currentStep = 0;
 let isScrolling = false; // To control the delay
 
+// Show the scroll down to continue
+document.addEventListener('DOMContentLoaded', () => {
+  const scrollDown = document.getElementById('scroll-down');
+
+  // Show the button after 2 seconds
+  setTimeout(() => {
+    scrollDown.classList.add('show');
+  }, 2000);
+
+  // Scroll to the next step when clicked
+  scrollDown.addEventListener('click', (event) => {
+    const nextStep = document.querySelector('[data-step="2"]');
+    if (nextStep) {
+      scrollToStep(1);
+    }
+  });
+});
+
 // Create progress bar items
 steps.forEach((step, index) => {
   step.setAttribute('tabindex', '0');
