@@ -1,7 +1,8 @@
 const steps = document.querySelectorAll('[data-step]');
 const progressBar = document.getElementById('progress-bar');
 let currentStep = 0;
-let isScrolling = false; // To control the delay
+let isScrolling = false; // Controls scroll delay
+let changeVis = false; // Prevent focus-triggered duplication
 
 // Show the scroll down to continue
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   scrollDown.addEventListener('click', (event) => {
     const nextStep = document.querySelector('[data-step="2"]');
     if (nextStep) {
+      changeVis = true;
       scrollToStep(1);
     }
   });
@@ -26,6 +28,7 @@ steps.forEach((step, index) => {
   step.setAttribute('tabindex', '0');
   step.addEventListener('focus', () => {
     scrollToStep(index); // Scroll to the step when focused
+    console.log("focus");
   });
   const progressItem = document.createElement('div');
   progressItem.classList.add('progress-item');
@@ -39,6 +42,7 @@ steps.forEach((step, index) => {
 
   // Click event to navigate to step
   progressItem.addEventListener('click', () => {
+    changeVis = true;
     scrollToStep(index);
   });
 
@@ -65,7 +69,7 @@ const announceStepChange = (index) => {
 
 // Scroll to a specific step
 const scrollToStep = (index) => {
-  if (index >= 0 && index < steps.length) {
+  if (index >= 0 && index < steps.length && changeVis) {
     steps[index].scrollIntoView({ behavior: 'smooth' });
 
     setTimeout(() => {
@@ -81,19 +85,21 @@ const scrollToStep = (index) => {
         window.location.hash = stepId; // Set the hash to the step's ID
       }
 
-      // Trigger visuals based on the current step
-      if (index < 3) tuitionVis1();
-      if (index == 3) salaryVis1();
-      if (index == 5) firstStep();
-      if (index == 6) secondStep();
-      if (index == 7) clearVis3();
-      if (index == 8) salaryVis3();
-      if (index == 9) highlightEntryVis3();
-      if (index == 10) allEntriesVis3();
-      if (index == 11) adjustYScaleVis3();
-      if (index >= 12) filterVis3();
-      console.log(currentStep);
-    }, 500);
+      if (changeVis) {
+        // Trigger visuals based on the current step
+        if (index < 3) tuitionVis1();
+        if (index == 3) salaryVis1();
+        if (index == 5) firstStep();
+        if (index == 6) secondStep();
+        if (index == 7) clearVis3();
+        if (index == 8) salaryVis3();
+        if (index == 9) highlightEntryVis3();
+        if (index == 10) allEntriesVis3();
+        if (index == 11) adjustYScaleVis3();
+        if (index >= 12) filterVis3();
+        changeVis = false;
+      }
+    }, 300);
   }
 };
 
@@ -107,27 +113,26 @@ const handleInitialHash = () => {
     );
     if (stepIndex !== -1) {
       currentStep = stepIndex; // Update currentStep to match the hash
+      changeVis = true;
       scrollToStep(currentStep);
     }
   }
-  // implement it to go back to original
-  // if (index < 3)
-  // if (index >= 3) redrawVis1();
 };
 
 // Handle scroll for desktop
-let scrollTimeout;
 window.addEventListener('wheel', (event) => {
   if (isScrolling) return;
   isScrolling = true;
+  changeVis = true;
 
   const delta = event.deltaMode === 1 ? event.deltaY * 33 : event.deltaY; // Changes to pixels ?
 
-  if (delta > 10) {
+  if (delta > 20) {
     scrollToStep(currentStep + 1);
-  } else if (delta < -10) {
+  } else if (delta < -20) {
     scrollToStep(currentStep - 1);
   }
+  console.log("wheel");
 
   setTimeout(() => {
     isScrolling = false;
@@ -139,6 +144,7 @@ window.addEventListener('wheel', (event) => {
 window.addEventListener('keydown', (event) => {
   if (isScrolling) return;
   isScrolling = true;
+  changeVis = true;
 
   if (event.key === 'ArrowDown') {
     scrollToStep(currentStep + 1);
