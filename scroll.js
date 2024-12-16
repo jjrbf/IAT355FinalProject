@@ -28,7 +28,6 @@ steps.forEach((step, index) => {
   step.setAttribute('tabindex', '0');
   step.addEventListener('focus', () => {
     scrollToStep(index); // Scroll to the step when focused
-    console.log("focus");
   });
   const progressItem = document.createElement('div');
   progressItem.classList.add('progress-item');
@@ -132,7 +131,6 @@ window.addEventListener('wheel', (event) => {
   } else if (delta < -20) {
     scrollToStep(currentStep - 1);
   }
-  console.log("wheel");
 
   setTimeout(() => {
     isScrolling = false;
