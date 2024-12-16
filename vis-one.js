@@ -50,15 +50,15 @@
       salary: parseFloat(d["Remuneration"]) || 0,
     }));
 
-  // Group salaries by university and calculate average
-  const avgSalaries = universities.map((uni) => {
+  // Group salaries by university and calculate median
+  const medianSalaries = universities.map((uni) => {
     const uniSalaries = filteredDataSalaries
       .filter((d) => d.Agency === uni)
       .map((d) => d.salary);
 
     return {
       Institution: uni,
-      avgSalary: d3.mean(uniSalaries) || 0, // Calculate average salary
+      medianSalary: d3.median(uniSalaries) || 0, // Calculate median salary
     };
   });
 
@@ -189,9 +189,9 @@
         .attr("font-size", "12px");
     
       // Title and footnotes
-      document.getElementById("vis1title").innerHTML = "UBC makes ALOT more money from its students";
+      document.getElementById("vis1title").innerHTML = "UBC makes A LOT more money from its students.";
       document.getElementById("vis1small").innerHTML = "Calculated using number of students in 2022/2023 × 2022/2023 tuition";
-      document.getElementById("vis1subtitle").innerHTML = "BC university’s revenue from student tuition";
+      document.getElementById("vis1subtitle").innerHTML = "BC university's revenue from student tuition";
     }
 
     function drawSalaryChart() {
@@ -199,16 +199,16 @@
       svg.selectAll("*").remove();
     
       // Update scales
-      xScale.domain([0, d3.max(avgSalaries, (d) => d.avgSalary)]);
+      xScale.domain([0, d3.max(medianSalaries, (d) => d.medianSalary)]);
     
       // Bars
       svg
         .selectAll("rect")
-        .data(avgSalaries)
+        .data(medianSalaries)
         .join("rect")
         .attr("x", xScale(0))
         .attr("y", (d) => yScale(d.Institution))
-        .attr("width", (d) => xScale(d.avgSalary) - xScale(0))
+        .attr("width", (d) => xScale(d.medianSalary) - xScale(0))
         .attr("height", yScale.bandwidth())
         .attr("fill", (d) => {
           // Assign ubc a special color so it stands out
@@ -222,10 +222,10 @@
       // Institution logos
       svg
         .selectAll(".logo")
-        .data(avgSalaries)
+        .data(medianSalaries)
         .join("image")
         .attr("class", "logo")
-        .attr("x", (d) => xScale(d.avgSalary) - 30) // Position inside the bar
+        .attr("x", (d) => xScale(d.medianSalary) - 30) // Position inside the bar
         .attr("y", (d) => yScale(d.Institution) + yScale.bandwidth() / 4)
         .attr("width", 25)
         .attr("height", 25)
@@ -238,16 +238,16 @@
           return null;
         });
     
-      // Average salary labels
+      // median salary labels
       svg
         .selectAll(".label")
-        .data(avgSalaries)
+        .data(medianSalaries)
         .join("text")
         .attr("class", "label")
-        .attr("x", (d) => xScale(d.avgSalary) + 5)
+        .attr("x", (d) => xScale(d.medianSalary) + 5)
         .attr("y", (d) => yScale(d.Institution) + yScale.bandwidth() / 2)
         .attr("dy", "0.35em")
-        .text((d) => `${d3.format("$,.0f")(d.avgSalary)}`)
+        .text((d) => `${d3.format("$,.0f")(d.medianSalary)}`)
         .attr("fill", "white")
         .attr("font-size", "15px");
     
@@ -274,8 +274,8 @@
     
       // Title and footnotes
       document.getElementById("vis1title").innerHTML = "...but pays quite comparably to the other top BC universities";
-      document.getElementById("vis1small").innerHTML = "Average of the 2020/2021 salaries of staff whose salary is over $75,000.";
-      document.getElementById("vis1subtitle").innerHTML = "Average university staff salary";
+      document.getElementById("vis1small").innerHTML = "Median of the 2020/2021 salaries of staff whose salary is over $75,000.";
+      document.getElementById("vis1subtitle").innerHTML = "Median university staff salary";
     }
 
   // Draw the default chart
