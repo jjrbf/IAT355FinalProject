@@ -409,16 +409,19 @@ p {
 
 /* Input Container Styling */
 .input-container {
-  margin-top: 20px;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   font-family: Arial, sans-serif;
+  border: 1px solid transparent; /* For debugging layout */
+  box-sizing: border-box;
+  min-height: 0; /* Ensures flex children don't force the parent to grow unexpectedly */
 }
 
 /* Label Styling */
 .search-label {
   font-size: 16px;
   color: #ffffff;
-  margin-bottom: 10px;
   display: block;
 }
 
@@ -427,14 +430,13 @@ p {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 5px;
 }
 
 /* Input Field Styling */
 .search-box input {
   width: 300px;
   height: 40px;
-  border: 1px solid #ffffff;
+  border: 1px solid #dce9fa;
   border-radius: 5px;
   background-color: #17212e;
   color: #ffffff;
@@ -448,23 +450,100 @@ p {
   opacity: 0.6;
 }
 
-/* Button Styling */
-.search-button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
-  color: #ffffff;
-  background-color: #49a9c9;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
 .search-button:hover {
   background-color: #3b8aa0;
+}
+
+.entries {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto; /* Enables scrolling only when content overflows */
+  border: 1px solid #dce9fa;
+  border-radius: 5px;
+  background-color: #17212e;
+  flex: 1; /* Allows entries to take remaining space */
+}
+
+.entries:not(:has(.entry))::after {
+  content: "No entries found.";
+  font-size: 0.9rem;
+  text-align: center;
+  color: #71839e;
+}
+
+.entry {
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #dce9fa;
+  border-radius: 5px;
+  background-color: #202936;
+  cursor: pointer;
+  transition: background-color 200ms ease-in-out;
+}
+
+.entry:hover {
+  background-color: #4b5e79;
+}
+
+.entry:hover > .symbol {
+  transform: translateX(-0.1rem);
+}
+
+.entry > .symbol {
+  transform: translateX(-0.3rem);
+  transition: transform 200ms ease-in-out;
+}
+
+.entry-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.institution {
+  font-size: 0.7rem;
+  font-weight: 300;
+}
+
+/* Scrollbar styling for the entries container */
+.entries {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: auto; /* Enables scrolling only when content overflows */
+  border: 1px solid #dce9fa;
+  border-radius: 5px;
+  background-color: #17212e;
+  flex: 1; /* Allows entries to take remaining space */
+  
+  /* Scrollbar styling */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #3b8aa0 #17212e; /* Firefox */
+}
+
+/* Custom styling for the scrollbar (Webkit browsers like Chrome) */
+.entries::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.entries::-webkit-scrollbar-track {
+  background-color: #17212e; /* Track background */
+  border-radius: 10px; /* Round corners on the track */
+}
+
+.entries::-webkit-scrollbar-thumb {
+  background-color: #3b8aa0; /* Thumb color */
+  border-radius: 10px; /* Round corners on the thumb */
+  border: 2px solid #17212e; /* Border between thumb and track */
+}
+
+.entries::-webkit-scrollbar-thumb:hover {
+  background-color: #58b7c6; /* Thumb color on hover */
 }
 
 /* CONCLUSION & INTRODUCTION STYLING */

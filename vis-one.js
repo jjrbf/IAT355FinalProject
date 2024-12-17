@@ -81,6 +81,24 @@
     .range([margin.top, height - margin.bottom])
     .padding(0.5);
 
+
+  function drawVerticalGridLines() {
+    const xAxisGrid = d3.axisBottom(xScale)
+      .ticks(5)
+      .tickSize(-(height - margin.top - margin.bottom)) // Extend to height
+      .tickFormat(""); // No text labels for grid
+
+    svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0, ${height - margin.bottom})`)
+      .call(xAxisGrid)
+      .selectAll("line")
+      .attr("stroke", "#5F666F")
+      .attr("stroke-dasharray", "4,4"); // Dotted lines
+
+    svg.selectAll(".grid .domain").remove(); // Remove grid axis line
+  }
+
   function drawTuitionChart() {
     // Clear existing elements
     svg.selectAll("*").remove();
@@ -88,6 +106,7 @@
     // Update scales
     xScale.domain([0, 600000000]);
 
+    drawVerticalGridLines(); // Add vertical grid lines
     // Bars
     svg
       .selectAll("rect")
@@ -239,6 +258,7 @@
 
     // Update scales
     xScale.domain([0, 120000]);
+    drawVerticalGridLines(); // Add vertical grid lines
 
     // Bars
     svg
