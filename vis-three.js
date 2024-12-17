@@ -7,7 +7,13 @@
     svgSelector: "#vis3Container",
   };
 
-  const { width, height, margin } = config;
+  // const { width, height, margin } = config;
+  const { margin } = config;
+
+  const mainContainer = d3.select(config.svgSelector);
+
+  let width = mainContainer.node().getBoundingClientRect().width;
+  let containerHeight = mainContainer.node().getBoundingClientRect().height;
 
   // Load and preprocess data
   const datasetSalaries = await d3.csv(config.dataPathSalaries, d3.autoType);
@@ -46,7 +52,7 @@
     .select(config.svgSelector)
     .append("svg")
     .attr("width", width)
-    .attr("height", height)
+    .attr("height", containerHeight)
 
   const xScale = d3
     .scaleBand()
@@ -54,12 +60,12 @@
     .range([margin.left, width - margin.right])
     .padding(0.5);
 
-  const yScale = d3.scaleLinear().range([height - margin.bottom, margin.top]);
+  const yScale = d3.scaleLinear().range([containerHeight - margin.bottom, margin.top]);
 
   const xAxisGroup = svg
     .append("g")
     .attr("class", "x-axis")
-    .attr("transform", `translate(0, ${height - margin.bottom})`);
+    .attr("transform", `translate(0, ${containerHeight - margin.bottom})`);
 
   const yAxisGroup = svg
     .append("g")
@@ -510,7 +516,7 @@ function adjustYScaleForTopUBCSalary() { // need to implement hover effects
 
   // Message Position
   const messageX = (width / 4) + 50;
-  const messageY = (height / 4) - 10;
+  const messageY = (containerHeight / 4) - 10;
 
   // Add the message text
   svg
@@ -760,7 +766,7 @@ const colorScale = d3
       // Margins
       const margin = { top: 40, right: 30, bottom: 80, left: 70 };
       const supplementaryWidth = container.node().getBoundingClientRect().width;
-      const supplementaryHeight = 500; // Fixed height
+      const supplementaryHeight = container.node().getBoundingClientRect().height;
   
       const width = supplementaryWidth - margin.left - margin.right;
       const height = supplementaryHeight - margin.top - margin.bottom;
@@ -769,8 +775,8 @@ const colorScale = d3
   
       const svgSupplementary = container
         .append("svg")
-        .attr("width", supplementaryWidth)
-        .attr("height", supplementaryHeight)
+        .attr("width", width)
+        .attr("height", containerHeight)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
   
@@ -836,7 +842,7 @@ const colorScale = d3
             .style("left", `${event.pageX + 10}px`)
             .style("top", `${event.pageY - 10}px`)
             .html(
-              `Name: ${name}<br>Salary: $${d3.format(",.2f")(salarySum)}<br>Position: ${position}`
+              `Name: ${name}<br>Salary: $${d3.format(",.2f")(salarySum)}<br>Position: ${position != null ? position : "Unavailable"}`
             );
         })
         .on("mouseout", function () {
@@ -885,7 +891,7 @@ const colorScale = d3
       });
   
     // Initial render
-    updateStackedBarChart();
+    updateStackedBarChart("Simon Fraser University (SFU)");
   
     // show
     d3.select("#vis3ContainerSupplementary").classed("hidden", false);

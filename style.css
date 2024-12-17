@@ -19,7 +19,7 @@ body {
 
 .hidden {
   visibility: hidden;
-  max-height: 0;
+  /* max-height: 0; */
 }
 
 .titlebg{
@@ -287,6 +287,11 @@ p {
   justify-content: space-between;
 }
 
+.vis2-text-container.hidden, #vis2-2Container.hidden {
+  max-height: 0;
+  max-width: 0;
+}
+
 .vis2-text {
   color: #E1F8EE;
   font-size: 2.125rem;
@@ -311,10 +316,17 @@ p {
 
 .vis3-vis-container {
   display: flex;
+  height: 100%;
+}
+
+#vis3Container {
+  width: 70%;
+  height: 100%;
 }
 
 #vis3ContainerSupplementary {
-  width: 100%;
+  width: 30%;
+  height: 100%;
 }
 
 #tooltip {
