@@ -94,14 +94,35 @@
     .domain([0, d3.max(filteredDataSalaries, (d) => d.salary)])
     .range([height - margin.bottom, margin.top]);
 
-  // Axes
-  svg
-    .append("g")
-    .attr("class", "y-axis")
-    .attr("transform", `translate(${margin.left}, 0)`)
-    .call(d3.axisLeft(yScale).tickFormat(d3.format("$,.0f")).ticks(6))
-    .selectAll("text")
-    .style("fill", "#fff");
+
+  // Horizontal Grid Lines
+  const numHorizontalLines = 6; // Number of horizontal grid lines
+  const horizontalLineData = Array.from({ length: numHorizontalLines }, (_, i) => {
+    return yScale.invert(yScale.domain()[0] + (i * (yScale.domain()[1] - yScale.domain()[0]) / (numHorizontalLines - 1)));
+  });
+
+   // Axes
+   const yAxis = svg
+   .append("g")
+   .attr("class", "y-axis")
+   .attr("transform", `translate(${margin.left}, 0)`)
+   .call(d3.axisLeft(yScale).tickFormat(d3.format("$,.0f")).ticks(6))
+   .selectAll("text")
+   .style("fill", "#fff");
+
+ // Horizontal Grid Lines (for each tick on the y-axis)
+ svg
+   .selectAll(".horizontal-line")
+   .data(yScale.ticks(6))  // Using the same number of ticks as on the y-axis
+   .join("line")
+   .attr("class", "horizontal-line")
+   .attr("x1", margin.left)
+   .attr("x2", width - margin.right)
+   .attr("y1", (d) => yScale(d))
+   .attr("y2", (d) => yScale(d))
+   .attr("stroke", "#999")
+   .attr("stroke-dasharray", "5,5")  // Dotted line
+   .attr("stroke-width", 1);
 
   // svg
   //   .append("g")
