@@ -74,7 +74,7 @@ body {
 
 @media (min-width: 98rem) {
   .infoTitle {
-    font-size: 4rem;
+    font-size: 3.5rem;
   }
 }
 
@@ -253,28 +253,46 @@ p {
 
 .vis-container.visualization2 {
   align-items: unset;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 5rem;
-  max-height: 100vh;
+  height: calc(100vh - 10rem);
 }
 
 #vis2title {
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
+  font-size: 3.5rem;
+  max-width: 70%;
+}
+
+#vis2title:has(~ .reverse) {
+  margin-bottom: 0rem;
+  height: 0;
 }
 
 .vis2-container {
   display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .vis2-container.reverse {
   flex-direction: row-reverse;
-  height: calc(100vh - 10rem);
+  height: 100%;
+}
+
+.vis2-vis-container:has(.hidden) {
+  width: 60%;
 }
 
 .vis2-vis-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-width: 30%;
+  max-height: 100%;
 }
 
 .vis2-number {
@@ -291,6 +309,7 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-width: 40%;
 }
 
 .vis2-text-container.hidden,
@@ -301,8 +320,27 @@ p {
 
 .vis2-text {
   color: #e1f8ee;
-  font-size: 2.125rem;
+  font-size: 1.75rem;
   font-weight: 600;
+}
+
+.vis2-figure {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.vis2-figure:has(.hidden) {
+  display: none;
+}
+
+#vis2-1Container, #vis2-2Container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  /* flex-direction: column; */
+  place-items: flex-end;
 }
 
 /* VISUALIZATION 3 STYLING */

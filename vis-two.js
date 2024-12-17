@@ -2,15 +2,20 @@
   const config = {
     width: 600,
     height: 400,
-    margin: { top: 20, right: 0, bottom: 0, left: 0 },
+    margin: { top: 30, right: 0, bottom: 30, left: 0 },
     dataPathExpenses: "datasets/UBCvsSFU_Expenses_2024.csv",
     svgSelector: "#vis2-1Container",
     svgSelector2: "#vis2-2Container",
   };
 
   const { margin } = config;
-  let height = config.height;
-  let width = config.width;
+
+  const mainContainer = d3.select(config.svgSelector);
+
+  let width = mainContainer.node().getBoundingClientRect().width;
+  let height = mainContainer.node().getBoundingClientRect().height;
+  let ogHeight = height;
+  let ogWidth = width;
 
   // Load and preprocess data
   const datasetExpenses = await d3.csv(config.dataPathExpenses, d3.autoType);
@@ -211,8 +216,8 @@
   }
 
   function firstStep() {
-    height = 400;
-    width = 600;
+    mainContainer.node().getBoundingClientRect().height > ogHeight ? height = mainContainer.node().getBoundingClientRect().height : height = ogHeight;
+    mainContainer.node().getBoundingClientRect().width > ogWidth ? width = mainContainer.node().getBoundingClientRect().width : width = ogWidth;
     d3.select(config.svgSelector2).classed("hidden", true);
     d3.select("#vis2-2subtitle").classed("hidden", true);
     d3.select("#second-step").classed("hidden", true);
@@ -224,8 +229,9 @@
   }
 
   function secondStep() {
-    height = 225;
-    width = 400;
+    height = ogHeight/1.5;
+    width = ogWidth/2;
+    // width = mainContainer.node().getBoundingClientRect().width;
     d3.select("#vis2title").classed("hidden", true);
     d3.select("#first-step").classed("hidden", true);
     d3.select(config.svgSelector2).classed("hidden", false);
