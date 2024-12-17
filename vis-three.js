@@ -1044,7 +1044,6 @@
       .attr("d", "M 0 0 L 10 5 L 0 10 z")
       .attr("fill", "white");
 
-      
 
     // Create a stacked bar chart in the #vis3ContainerSupplementary
     const container = d3.select("#vis3ContainerSupplementary");
@@ -1094,7 +1093,21 @@
 
       const groupedData = d3.group(filteredData, (d) => d.Agency);
 
-      const stack = d3.stack().keys(d3.range(1, 11));
+      // Precompute total size per rank for sorting
+      const rankTotals = {};
+      groupedData.forEach((values) => {
+        values.forEach((d) => {
+          rankTotals[d.rank] = (rankTotals[d.rank] || 0) + d.salary;
+        });
+      });
+
+      // Sort stack keys based on total size of the rank
+      const sortedKeys = Object.keys(rankTotals).sort(
+        (a, b) => rankTotals[a] - rankTotals[b] // Sort descending
+      );
+
+      // Stack generator with sorted keys
+      const stack = d3.stack().keys(sortedKeys);
       const stackedData = stack(
         Array.from(groupedData, ([key, values]) => ({
           Agency: key,
