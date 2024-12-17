@@ -53,7 +53,9 @@
         <p class="vis-subtitle" id="vis1subtitle">
           BC university's revenue from student tuition
         </p>
-        <div id="vis1Container"></div>
+        <div class="vis1-container">
+            <div id="vis1Container"></div>
+        </div>
         <p class="vis-small" id="vis1small">
           Calculated using number of students in 2022/2023 × 2022/2023 tuition
         </p>
@@ -233,8 +235,8 @@
       <h2 class="screenreader">
         Search for an individual university faculty salary
       </h2>
-      <div class="full centerPg vis-container visualization4">
-        <div class="visualization-container">
+      <div class="full vis-container visualization4">
+        <div class="vis4-text-container">
           <p class="vis-title" id="vis4title">
             Know someone working at a university?
           </p>
@@ -242,20 +244,22 @@
             Find out how much they make, and compare it to the highest earner at
             their school.
           </p>
-          <div id="vis4Container"></div>
         </div>
-        <div class="input-container">
-          <label for="vis4faculty" class="search-label">Search by name:</label>
-          <div class="search-box">
-            <input
-              type="search"
-              name="facultySearch"
-              id="vis4faculty"
-              placeholder=""
-            />
-            <button type="submit" class="search-button">Search</button>
-            <!-- implement showing where they're from here -->
-          </div>
+        <div class="vis4-container">
+            <div id="vis4Container"></div>
+            <div class="input-container">
+            <label for="vis4faculty" class="search-label">Search by name:</label>
+            <div class="search-box">
+                <input
+                type="search"
+                name="facultySearch"
+                id="vis4faculty"
+                placeholder=""
+                />
+                <button type="submit" class="search-button">Search</button>
+                <!-- implement showing where they're from here -->
+            </div>
+            </div>
         </div>
       </div>
       <div class="full centerPg s14" data-step="15" id="search">
@@ -264,9 +268,9 @@
     </section>
 
     <div class="full centerPg text-only" data-step="16" id="credits">
-      <h2>Credits</h2>
-      <ul>
-        <li>
+        <h2>Credits</h2>
+        <ul>
+            <li>
                 <p>2020/2021 salaries from <a href="https://github.com/vs-postmedia/public-sector-salary-data/blob/main/data/public_sector_salary-fy20_21/public_sector_salary-fy20_21-universities.csv">Vancouver Sun</a></p>
             </li>
             <li>

@@ -60,6 +60,27 @@
     .range([margin.left, width - margin.right])
     .padding(0.5);
 
+  // Mapping object for university acronyms
+  const universityAcronyms = {
+    "University of British Columbia (UBC)": "UBC",
+    "Simon Fraser University (SFU)": "SFU",
+    "BCIT": "BCIT",
+    "University of Victoria": "UVic",
+    "Kwantlen Polytechnic University": "KPU",
+    "Vancouver Community College (VCC)": "VCC",
+    "Langara College": "Langara",
+    "Douglas College": "Douglas",
+    "Justice Institute of B.C.": "JIBC",
+    "University of the Fraser Valley": "UFV",
+  };
+
+  // Modify the domain of the xScale to use acronyms
+  const xScaleAcronym = d3
+  .scaleBand()
+  .domain(universities.map((uni) => universityAcronyms[uni] || uni))
+  .range([margin.left, width - margin.right])
+  .padding(0.5);
+
   const yScale = d3
     .scaleLinear()
     .range([containerHeight - margin.bottom, margin.top]);
@@ -100,11 +121,10 @@
     yScale.domain(newYDomain);
 
     yAxisGroup.transition().duration(transitionDuration).call(yAxis);
-    xAxisGroup.transition().duration(transitionDuration).call(xAxis(xScale));
+    xAxisGroup.transition().duration(transitionDuration).call(xAxis(xScale).tickFormat((d) => universityAcronyms[d] || d));
     svg
       .selectAll(".x-axis text")
-      .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end");
+      .style("text-anchor", "middle");
   }
 
   function addHoverEffects(selection) {
@@ -936,7 +956,7 @@
       svgSupplementary
         .append("g")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScaleSupplementary));
+        .call(d3.axisBottom(xScaleSupplementary).tickFormat((d) => universityAcronyms[d] || d));
 
       svgSupplementary.append("g").call(d3.axisLeft(yScaleSupplementary));
     }

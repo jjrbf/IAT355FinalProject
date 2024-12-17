@@ -2,13 +2,19 @@
   const config = {
     width: 900,
     height: 500,
-    margin: { top: 20, right: 50, bottom: 140, left: 100 },
+    margin: { top: 40, right: 30, bottom: 80, left: 50 },
     dataPathUniversities: "datasets/bc_universities_2022_23_tuition.csv",
     dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
     svgSelector: "#vis4Container",
   };
 
-  const { width, height, margin } = config;
+  // const { width, height, margin } = config;
+  const { margin } = config;
+
+  const mainContainer = d3.select(config.svgSelector);
+
+  let width = mainContainer.node().getBoundingClientRect().width;
+  let height = mainContainer.node().getBoundingClientRect().height;
 
   // Load and preprocess data
   const datasetSalaries = await d3.csv(config.dataPathSalaries, d3.autoType);
@@ -78,15 +84,15 @@
     .selectAll("text")
     .style("fill", "#fff");
 
-  svg
-    .append("g")
-    .attr("class", "x-axis")
-    .attr("transform", `translate(0, ${height - margin.bottom})`)
-    .call(d3.axisBottom(xScale))
-    .selectAll("text")
-    .attr("text-anchor", "end")
-    .attr("transform", "rotate(-45)")
-    .style("fill", "#fff");
+  // svg
+  //   .append("g")
+  //   .attr("class", "x-axis")
+  //   .attr("transform", `translate(0, ${height - margin.bottom})`)
+  //   .call(d3.axisBottom(xScale))
+  //   .selectAll("text")
+  //   .attr("text-anchor", "end")
+  //   .attr("transform", "rotate(-15)")
+  //   .style("fill", "#fff");
 
   svg.selectAll(".domain, .tick line").style("stroke", "#555");
 
@@ -129,6 +135,41 @@
     .style("visibility", "hidden")
     .style("font-family", "Arial, sans-serif")
     .style("font-size", "14px");
+  
+  // CODE TO CHANGE ALL TO ACRONYMS (need to comment out current x-axis first)
+
+  // Mapping object for university acronyms
+  const universityAcronyms = {
+    "University of British Columbia (UBC)": "UBC",
+    "Simon Fraser University (SFU)": "SFU",
+    "BCIT": "BCIT",
+    "University of Victoria": "UVic",
+    "Kwantlen Polytechnic University": "KPU",
+    "Vancouver Community College (VCC)": "VCC",
+    "Langara College": "Langara",
+    "Douglas College": "Douglas",
+    "Justice Institute of B.C.": "JIBC",
+    "University of the Fraser Valley": "UFV",
+  };
+
+  // Modify the domain of the xScale to use acronyms
+  const xScaleAcronym = d3
+  .scaleBand()
+  .domain(universities.map((uni) => universityAcronyms[uni] || uni))
+  .range([margin.left, width - margin.right])
+  .padding(0.5);
+
+  // Modify the axis labels
+  svg
+  .append("g")
+  .attr("class", "x-axis")
+  .attr("transform", `translate(0, ${height - margin.bottom})`)
+  .call(
+    d3.axisBottom(xScale).tickFormat((d) => universityAcronyms[d] || d)
+  )
+  .selectAll("text")
+  .attr("text-anchor", "middle")
+  .style("fill", "#fff");
 
   // Handle hover behavior
   dots

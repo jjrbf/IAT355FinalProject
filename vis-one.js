@@ -2,13 +2,19 @@
   const config = {
     width: 900,
     height: 400,
-    margin: { top: 40, right: 240, bottom: 40, left: 210 },
+    margin: { top: 10, right: 40, bottom: 40, left: 40 },
     dataPathUniversities: "datasets/bc_universities_2022_23_tuition.csv",
     dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
     svgSelector: "#vis1Container",
   };
 
-  const { width, height, margin } = config;
+  // const { width, height, margin } = config;
+  const { margin } = config;
+
+  const mainContainer = d3.select(config.svgSelector);
+
+  let width = mainContainer.node().getBoundingClientRect().width;
+  let height = mainContainer.node().getBoundingClientRect().height;
 
   // Load and preprocess data
   const datasetUniversities = await d3.csv(
@@ -80,7 +86,7 @@
     svg.selectAll("*").remove();
 
     // Update scales
-    xScale.domain([0, d3.max(filteredDataUniversities, (d) => d.totalRevenue)]);
+    xScale.domain([0, 600000000]);
 
     // Bars
     svg
@@ -93,11 +99,11 @@
       .attr("height", yScale.bandwidth())
       .attr("fill", (d) => {
         // Assign ubc a special color so it stands out
-        if (d.Institutions.includes("UBC")) return "#D3D5EB";
-        if (d.Institutions.includes("SFU")) return "#B5111B";
-        if (d.Institutions.includes("BCIT")) return "#003E6B";
-        if (d.Institutions.includes("University of Victoria")) return "#FFFFFF";
-        return "#D9D9D9";
+        if (d.Institutions.includes("UBC")) return "#468692";
+        // if (d.Institutions.includes("SFU")) return "#B5111B";
+        // if (d.Institutions.includes("BCIT")) return "#003E6B";
+        // if (d.Institutions.includes("University of Victoria")) return "#FFFFFF";
+        return "#B9CDC7";
       });
 
     // Institution logos
@@ -189,9 +195,32 @@
       .attr("transform", `translate(0, ${height - margin.bottom})`)
       .attr("font-size", "12px");
 
+    // svg
+    //   .append("g")
+    //   .call(d3.axisLeft(yScale))
+    //   .attr("transform", `translate(${margin.left}, 0)`)
+    //   .attr("font-size", "12px");
+
+    // CODE TO CHANGE ALL TO ACRONYMS (need to comment out current x-axis first)
+
+    // Mapping object for university acronyms
+    const universityAcronyms = {
+      "University of British Columbia (UBC)": "UBC",
+      "Simon Fraser University (SFU)": "SFU",
+      "BCIT": "BCIT",
+      "University of Victoria": "UVic",
+    };
+
+    // Modify the domain of the xScale to use acronyms
+    const yScaleAcronym = d3
+    .scaleBand()
+    .domain(universities.map((uni) => universityAcronyms[uni] || uni))
+    .range([margin.left, width - margin.right])
+    .padding(0.5);
+
     svg
       .append("g")
-      .call(d3.axisLeft(yScale))
+      .call(d3.axisLeft(yScale).tickFormat((d) => universityAcronyms[d] || d))
       .attr("transform", `translate(${margin.left}, 0)`)
       .attr("font-size", "12px");
 
@@ -209,7 +238,7 @@
     svg.selectAll("*").remove();
 
     // Update scales
-    xScale.domain([0, d3.max(medianSalaries, (d) => d.medianSalary)]);
+    xScale.domain([0, 120000]);
 
     // Bars
     svg
@@ -223,11 +252,11 @@
       .attr("fill", (d) => {
         // Assign ubc a special color so it stands out
         if (d.Institution === "University of British Columbia (UBC)")
-          return "#D3D5EB";
-        if (d.Institution === "Simon Fraser University (SFU)") return "#B5111B";
-        if (d.Institution === "BCIT") return "#003E6B";
-        if (d.Institution === "University of Victoria") return "#FFFFFF";
-        return "#D9D9D9";
+          return "#468692";
+        // if (d.Institution === "Simon Fraser University (SFU)") return "#B5111B";
+        // if (d.Institution === "BCIT") return "#003E6B";
+        // if (d.Institution === "University of Victoria") return "#FFFFFF";
+        return "#B9CDC7";
       });
 
     // Institution logos
@@ -279,9 +308,32 @@
       .attr("transform", `translate(0, ${height - margin.bottom})`)
       .attr("font-size", "12px");
 
+    // svg
+    //   .append("g")
+    //   .call(d3.axisLeft(yScale))
+    //   .attr("transform", `translate(${margin.left}, 0)`)
+    //   .attr("font-size", "12px");
+
+    // CODE TO CHANGE ALL TO ACRONYMS (need to comment out current x-axis first)
+
+    // Mapping object for university acronyms
+    const universityAcronyms = {
+      "University of British Columbia (UBC)": "UBC",
+      "Simon Fraser University (SFU)": "SFU",
+      "BCIT": "BCIT",
+      "University of Victoria": "UVic",
+    };
+
+    // Modify the domain of the xScale to use acronyms
+    const yScaleAcronym = d3
+    .scaleBand()
+    .domain(universities.map((uni) => universityAcronyms[uni] || uni))
+    .range([margin.left, width - margin.right])
+    .padding(0.5);
+
     svg
       .append("g")
-      .call(d3.axisLeft(yScale))
+      .call(d3.axisLeft(yScale).tickFormat((d) => universityAcronyms[d] || d))
       .attr("transform", `translate(${margin.left}, 0)`)
       .attr("font-size", "12px");
 
