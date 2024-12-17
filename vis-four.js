@@ -142,7 +142,9 @@
         .attr("stroke-width", 2);
 
       // Find stats for the individual's university
-      const uniStats = universityStats.find((stat) => stat.university === d.university);
+      const uniStats = universityStats.find(
+        (stat) => stat.university === d.university
+      );
 
       // Calculate comparison ratios
       const comparedToAvg = (d.salary / uniStats.avgSalary).toFixed(2);
@@ -172,9 +174,7 @@
       const selectedDot = d3.select(this);
 
       // Revert the appearance of the hovered point
-      selectedDot
-        .attr("fill", "#58B7C6")
-        .attr("stroke", "none");
+      selectedDot.attr("fill", "#58B7C6").attr("stroke", "none");
 
       tooltip.style("visibility", "hidden");
     });

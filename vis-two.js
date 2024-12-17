@@ -37,12 +37,36 @@
       }
 
       const expenseCategories = [
-        { label: "Salaries and Benefits", value: uniData.SalariesAndBenefits, color: "#519FAB" },
-        { label: "Supplies and Sundries", value: uniData.Supplies, color: "#58B7C6" },
-        { label: "Scholarships, Fellowships, and Bursaries", value: uniData.ScholarshipsAndBursaries, color: "#79D0B4" },
-        { label: "Cost of Goods Sold, Utilities, and Other", value: uniData.CostOfGoodsAndUtilities, color: "#8DE8CA" },
-        { label: "Professional and Consulting", value: uniData.ProfessionalFees, color: "#ACFAD8" },
-        { label: "Travel and Interest Cost", value: uniData.TravelAndInterest, color: "#E1F8EE" },
+        {
+          label: "Salaries and Benefits",
+          value: uniData.SalariesAndBenefits,
+          color: "#519FAB",
+        },
+        {
+          label: "Supplies and Sundries",
+          value: uniData.Supplies,
+          color: "#58B7C6",
+        },
+        {
+          label: "Scholarships, Fellowships, and Bursaries",
+          value: uniData.ScholarshipsAndBursaries,
+          color: "#79D0B4",
+        },
+        {
+          label: "Cost of Goods Sold, Utilities, and Other",
+          value: uniData.CostOfGoodsAndUtilities,
+          color: "#8DE8CA",
+        },
+        {
+          label: "Professional and Consulting",
+          value: uniData.ProfessionalFees,
+          color: "#ACFAD8",
+        },
+        {
+          label: "Travel and Interest Cost",
+          value: uniData.TravelAndInterest,
+          color: "#E1F8EE",
+        },
       ];
 
       const totalValue = d3.sum(expenseCategories, (d) => d.value);
@@ -53,11 +77,22 @@
 
       const radius = Math.min(width, height) / 2 - margin.top;
 
-      const pie = d3.pie().value((d) => d.value).sort(null);
-      const arc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius);
-      const arcHover = d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 1.1);
+      const pie = d3
+        .pie()
+        .value((d) => d.value)
+        .sort(null);
+      const arc = d3
+        .arc()
+        .innerRadius(radius * 0.6)
+        .outerRadius(radius);
+      const arcHover = d3
+        .arc()
+        .innerRadius(radius * 0.6)
+        .outerRadius(radius * 1.1);
 
-      const g = svg.append("g").attr("transform", `translate(${width / 2}, ${height / 2})`);
+      const g = svg
+        .append("g")
+        .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
       const arcs = g
         .selectAll(".arc")
@@ -69,27 +104,34 @@
       arcs
         .append("path")
         .attr("d", arc)
-        .attr("d", (d) => (d.data.label === "Salaries and Benefits" ? arcHover(d) : arc(d)))
+        .attr("d", (d) =>
+          d.data.label === "Salaries and Benefits" ? arcHover(d) : arc(d)
+        )
         .attr("fill", (d) => d.data.color)
         .on("mouseover", function (event, d) {
           d3.select(this)
             .transition()
             .duration(200)
-            .attr("d", d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 1.1));
+            .attr(
+              "d",
+              d3
+                .arc()
+                .innerRadius(radius * 0.6)
+                .outerRadius(radius * 1.1)
+            );
 
           tooltip
             .style("opacity", 1)
             .html(
-              `<strong>${d.data.label}</strong><br>Value: $${d3.format(",.0f")(d.data.value)}`
+              `<strong>${d.data.label}</strong><br>Value: $${d3.format(",.0f")(
+                d.data.value
+              )}`
             )
             .style("left", `${event.pageX + 10}px`)
             .style("top", `${event.pageY - 20}px`);
         })
         .on("mouseout", function () {
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("d", arc);
+          d3.select(this).transition().duration(200).attr("d", arc);
 
           tooltip.style("opacity", 0);
         });
@@ -114,27 +156,27 @@
 
       // Annotation for "Salaries and Benefits"
       const salariesSegment = expenseCategories.find(
-          (d) => d.label === "Salaries and Benefits"
-        );
+        (d) => d.label === "Salaries and Benefits"
+      );
 
-        const salariesArc = pie(expenseCategories).find(
-          (d) => d.data.label === "Salaries and Benefits"
-        );
+      const salariesArc = pie(expenseCategories).find(
+        (d) => d.data.label === "Salaries and Benefits"
+      );
 
-        const annotationPos = arc.centroid(salariesArc);
+      const annotationPos = arc.centroid(salariesArc);
 
-        // Add arrow
-        g.append("line")
-          .attr("x1", annotationPos[0])
-          .attr("y1", annotationPos[1])
-          .attr("x2", annotationPos[0] * 1.2)
-          .attr("y2", annotationPos[1] * 1.2)
-          .attr("stroke", "white")
-          .attr("stroke-width", 2)
-          .attr("marker-end", "url(#arrow)");
+      // Add arrow
+      g.append("line")
+        .attr("x1", annotationPos[0])
+        .attr("y1", annotationPos[1])
+        .attr("x2", annotationPos[0] * 1.2)
+        .attr("y2", annotationPos[1] * 1.2)
+        .attr("stroke", "white")
+        .attr("stroke-width", 2)
+        .attr("marker-end", "url(#arrow)");
 
-        // Add annotation text
-        g.append("text")
+      // Add annotation text
+      g.append("text")
         .attr("x", annotationPos[0] * 1.5)
         .attr("y", annotationPos[1] * 1.5)
         .attr("text-anchor", "start")
@@ -142,29 +184,29 @@
         .attr("fill", "white")
         .selectAll("tspan")
         .data([
-          `$${d3.format(",.0f")(salariesSegment.value)}`, 
-          `in ${salariesSegment.label}`
+          `$${d3.format(",.0f")(salariesSegment.value)}`,
+          `in ${salariesSegment.label}`,
         ])
         .enter()
         .append("tspan")
         .attr("x", annotationPos[0] * 1.2) // Align each line horizontally
         .attr("dy", (d, i) => i * 15) // Adjust line spacing (15px between lines)
         .text((d) => d);
-      
 
-        // Define arrow marker
-        svg.append("defs")
-          .append("marker")
-          .attr("id", "arrow")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 5)
-          .attr("refY", 5)
-          .attr("markerWidth", 6)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", "white");
+      // Define arrow marker
+      svg
+        .append("defs")
+        .append("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 5)
+        .attr("refY", 5)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0 0 L 10 5 L 0 10 z")
+        .attr("fill", "white");
     });
   }
 
