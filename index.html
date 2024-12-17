@@ -241,24 +241,22 @@
             Know someone working at a university?
           </p>
           <p class="vis-subtitle" id="vis4subtitle">
-            Find out how much they make, and compare it to the highest earner at
-            their school.
+            Find out how much they make, and compare it to the highest earner overall and at their school.
           </p>
         </div>
         <div class="vis4-container">
             <div id="vis4Container"></div>
-            <div class="input-container">
-            <label for="vis4faculty" class="search-label">Search by name:</label>
-            <div class="search-box">
-                <input
-                type="search"
-                name="facultySearch"
-                id="vis4faculty"
-                placeholder=""
-                />
-                <button type="submit" class="search-button">Search</button>
-                <!-- implement showing where they're from here -->
-            </div>
+            <div class="input-container" id="inputContainer">
+              <div class="search-box">
+                  <input
+                  type="search"
+                  name="facultySearch"
+                  id="vis4faculty"
+                  placeholder="Search by name..."
+                  />
+              </div>
+              <div class="entries" id="searchEntries">
+              </div>
             </div>
         </div>
       </div>

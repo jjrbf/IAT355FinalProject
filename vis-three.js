@@ -1009,7 +1009,7 @@
     ];
 
     const lineHeight = 16; // Line spacing
-    const annotationX = 220, annotationY = 150; // Positioning
+    const annotationX = ubcX + 20 + bracketLength + 40, annotationY = yScale((ubcTopSalary + ubcBottomSalary) / 2) - lineHeight*0.7; // Positioning
 
     annotationText.forEach((line, index) => {
       svg.append("text")
