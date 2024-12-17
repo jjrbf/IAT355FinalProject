@@ -117,16 +117,6 @@
     .attr("d", "M 0 0 L 10 5 L 0 10 Z") // Triangle shape
     .attr("fill", "white");
 
-  function updateAxes(newYDomain, transitionDuration = 1000) {
-    yScale.domain(newYDomain);
-
-    yAxisGroup.transition().duration(transitionDuration).call(yAxis);
-    xAxisGroup.transition().duration(transitionDuration).call(xAxis(xScale).tickFormat((d) => universityAcronyms[d] || d));
-    svg
-      .selectAll(".x-axis text")
-      .style("text-anchor", "middle");
-  }
-
   function addHoverEffects(selection) {
     selection
       .attr("opacity", 0.3)
@@ -151,6 +141,55 @@
       });
   }
 
+  function updateAxes(newYDomain, transitionDuration = 1000) {
+    yScale.domain(newYDomain);
+  
+    yAxisGroup.transition().duration(transitionDuration).call(yAxis);
+    xAxisGroup.transition().duration(transitionDuration).call(xAxis(xScale).tickFormat((d) => universityAcronyms[d] || d));
+  
+    svg
+      .selectAll(".x-axis text")
+      .style("text-anchor", "middle");
+  
+    // Add hover effect for tooltips on x-axis labels
+    addXLabelHoverEffect();
+  }
+
+  const tooltip = d3
+    .select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("background", "#E3F4EF")
+    .style("border", "1px solid #ddd")
+    .style("padding", "5px")
+    .style("font-size", "12px")
+    .style("border-radius", "4px")
+    .style("pointer-events", "none")
+    .style("opacity", 0);
+
+  // Update x-axis labels to show tooltip
+  function addXLabelHoverEffect() {
+    svg
+      .selectAll(".x-axis text")
+      .style("cursor", "pointer")
+      .on("mouseover", (event, d) => {
+        tooltip
+          .style("opacity", 1)
+          .html(d) // Show the full university name
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 20}px`);
+      })
+      .on("mousemove", (event) => {
+        tooltip
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 20}px`);
+      })
+      .on("mouseout", () => {
+        tooltip.style("opacity", 0);
+      });
+  }
+
+
   function clearElements(classes) {
     classes.forEach((cls) => svg.selectAll(`.${cls}`).remove());
   }
@@ -162,6 +201,9 @@
       "tooltip",
       "highlight-label",
       "arrow-shaft",
+      "annotation-group", "annotation-text",
+      "horizontal-cap", "vertical-line",
+      "salary-range-text",
     ]);
 
     const medianDomain = [
@@ -262,6 +304,9 @@
       "median-line-updated",
       "highlight-label",
       "arrow-shaft",
+      "annotation-group", "annotation-text",
+      "horizontal-cap", "vertical-line",
+      "salary-range-text",
     ]);
 
     const ubcAverage = filteredDataSalaries.find(
@@ -360,6 +405,9 @@
       "median-line-updated",
       "highlight-label",
       "arrow-shaft",
+      "annotation-group", "annotation-text",
+      "horizontal-cap", "vertical-line",
+      "salary-range-text",
     ]);
 
     const medianDomain = [
@@ -534,6 +582,9 @@
       "median-line",
       "highlight-label",
       "arrow-shaft",
+      "annotation-group", "annotation-text",
+      "horizontal-cap", "vertical-line",
+      "salary-range-text",
     ]);
 
     const salaryDomain = [0, d3.max(filteredDataSalaries, (d) => d.salary)];
@@ -830,6 +881,170 @@
       .attr("fill", "#519FAB");
 
     addHoverEffects(points);
+
+    const capLength = 10; // Length of horizontal lines
+
+    d3.group(top10PerUniversity, (d) => d.Agency).forEach((data, agency) => {
+      const xPosition = xScale(agency) + xScale.bandwidth() / 2 - 15;
+      const [maxSalary, minSalary] = d3.extent(data, (d) => d.salary);
+      const salaryRange = maxSalary - minSalary; // Calculate salary range
+    
+      // --- Add Vertical Lines and Caps ---
+      [["vertical-line", xPosition, xPosition, maxSalary, minSalary], // Vertical line
+       ["horizontal-cap", xPosition - capLength / 2, xPosition + capLength / 2, maxSalary, maxSalary], // Top cap
+       ["horizontal-cap", xPosition - capLength / 2, xPosition + capLength / 2, minSalary, minSalary]  // Bottom cap
+      ].forEach(([cls, x1, x2, y1, y2]) => {
+        svg.append("line")
+          .attr("class", cls)
+          .attr("x1", x1).attr("x2", x2)
+          .attr("y1", yScale(y1)).attr("y2", yScale(y2))
+          .attr("stroke", "#3F5554").attr("stroke-width", 2);
+      });
+    
+      // Salary range text
+      svg.append("text")
+      .attr("class", "salary-range-text") // Added class for reference
+      .attr("x", xPosition) // Center the text above the cap
+      .attr("y", yScale(maxSalary) / 0.93) // Place slightly above the top cap
+      .attr("fill", "#3F5554")
+      .attr("font-size", "12px")
+      .attr("text-anchor", "middle") // Center-align the text horizontally
+      .text(`$${d3.format(",.0f")(salaryRange)}`) // Display formatted salary range
+      .on("mouseover", function (event) {
+        d3.select("#tooltip")
+          .style("opacity", 1)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 10}px`)
+          .html(`Salary range for ${agency}`);
+      })
+      .on("mouseout", () => {
+        d3.select("#tooltip").style("opacity", 0);
+      });
+    });
+    
+    // --- Add Tooltip Div to Body ---
+    const tooltip = d3.select("body").append("div")
+      .attr("id", "tooltip")
+      .style("position", "absolute")
+      .style("background", "rgba(0, 0, 0, 0.7)")
+      .style("color", "white")
+      .style("padding", "6px")
+      .style("border-radius", "4px")
+      .style("font-size", "12px")
+      .style("opacity", 0)
+      .style("pointer-events", "none"); // Tooltip does not block interactions
+
+    // --- Add Annotation Group ---
+    const annotationGroup = svg.append("g").attr("class", "annotation-group");
+
+    // UBC annotation
+    const ubcData = top10PerUniversity.filter(
+      (d) => d.Agency === "University of British Columbia (UBC)"
+    );
+    const ubcTopSalary = d3.max(ubcData, (d) => d.salary);
+    const ubcBottomSalary = d3.min(ubcData, (d) => d.salary);
+    const ubcX = xScale("University of British Columbia (UBC)") + xScale.bandwidth() / 2;
+
+    // Draw vertical bracket line with animation
+    annotationGroup
+      .append("line")
+      .attr("x1", ubcX + 30)
+      .attr("x2", ubcX + 30)
+      .attr("y1", yScale(ubcTopSalary)) // Start at top salary
+      .attr("y2", yScale(ubcTopSalary)) // Start at same position
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .transition()
+      .duration(1000)
+      .attr("y2", yScale(ubcBottomSalary)); // Animate to bottom salary
+
+    // Horizontal bracket lines animation
+    const bracketLength = 20;
+
+    // Top bracket
+    annotationGroup
+      .append("line")
+      .attr("x1", ubcX + 10)
+      .attr("x2", ubcX + 10)
+      .attr("y1", yScale(ubcTopSalary))
+      .attr("y2", yScale(ubcTopSalary))
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .transition()
+      .duration(1000)
+      .attr("x2", ubcX + 10 + bracketLength);
+
+    // Bottom bracket
+    annotationGroup
+      .append("line")
+      .attr("x1", ubcX + 10)
+      .attr("x2", ubcX + 10)
+      .attr("y1", yScale(ubcBottomSalary))
+      .attr("y2", yScale(ubcBottomSalary))
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .transition()
+      .duration(1000)
+      .attr("x2", ubcX + 10 + bracketLength);
+
+    // Arrow line pointing to text
+    annotationGroup
+      .append("line")
+      .attr("x1", ubcX + 10 + bracketLength)
+      .attr("x2", ubcX + 10 + bracketLength)
+      .attr("y1", yScale((ubcTopSalary + ubcBottomSalary) / 2))
+      .attr("y2", yScale((ubcTopSalary + ubcBottomSalary) / 2))
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .attr("marker-end", "url(#arrowhead)")
+      .transition()
+      .duration(1000)
+      .attr("x2", ubcX + 10 + bracketLength + 40);
+
+    // Add annotation text with fade-in animation
+    const annotationText = [
+      "UBC has the largest range in which their staff are paid.",
+      "When compared to other schools, the difference",
+      "in how much the top ten employees make is obvious."
+    ];
+
+    const lineHeight = 16; // Line spacing
+    const annotationX = 220, annotationY = 150; // Positioning
+
+    annotationText.forEach((line, index) => {
+      svg.append("text")
+        .attr("class", "annotation-text")
+        .attr("x", annotationX)
+        .attr("y", annotationY + index * lineHeight)
+        .style("fill", "white")
+        .style("font-size", "14px")
+        .style("font-weight", "normal")
+        .style("text-anchor", "start")
+        .style("opacity", 0) // Start with opacity 0
+        .transition()
+        .delay(1000) // Delay to align with bracket animation
+        .duration(1000)
+        .style("opacity", 1) // Fade-in effect
+        .text(line);
+    });
+  
+
+    // Define arrowhead marker
+    svg
+      .append("defs")
+      .append("marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "0 0 10 10")
+      .attr("refX", 9)
+      .attr("refY", 5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M 0 0 L 10 5 L 0 10 z")
+      .attr("fill", "white");
+
+      
 
     // Create a stacked bar chart in the #vis3ContainerSupplementary
     const container = d3.select("#vis3ContainerSupplementary");

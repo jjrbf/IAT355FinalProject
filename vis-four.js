@@ -171,6 +171,39 @@
   .attr("text-anchor", "middle")
   .style("fill", "#fff");
 
+
+  const xAxisTooltip = d3
+  .select("body")
+  .append("div")
+  .style("position", "absolute")
+  .style("background", "#E3F4EF")
+  .style("border", "1px solid #ddd")
+  .style("padding", "5px")
+  .style("font-size", "12px")
+  .style("border-radius", "4px")
+  .style("pointer-events", "none")
+  .style("opacity", 0);
+  // Update x-axis labels to show tooltip
+  svg
+    .selectAll(".x-axis text")
+    .style("cursor", "pointer")
+    .on("mouseover", (event, d) => {
+      xAxisTooltip 
+        .style("opacity", 1)
+        .html(d) // Show the full university name
+        .style("left", `${event.pageX + 10}px`)
+        .style("top", `${event.pageY - 20}px`);
+    })
+    .on("mousemove", (event) => {
+      xAxisTooltip
+        .style("left", `${event.pageX + 10}px`)
+        .style("top", `${event.pageY - 20}px`);
+    })
+    .on("mouseout", () => {
+      xAxisTooltip.style("opacity", 0);
+    });
+  
+
   // Handle hover behavior
   dots
     .on("mouseover", function (event, d) {
@@ -225,9 +258,13 @@
   searchBar.on("input", (event) => {
     const query = event.target.value.toLowerCase();
 
-    dots.attr("visibility", (d) =>
-      d.name.toLowerCase().includes(query) ? "visible" : "hidden"
-    );
+    dots.attr("visibility", (d) => {
+      // Keep Jia Dawn always visible
+      if (d.name === "Jia, Dawn") return "visible";
+
+      // Filter based on the search query
+      return d.name.toLowerCase().includes(query) ? "visible" : "hidden";
+    });
   });
 
   // Search functionality for the pre-existing HTML input
@@ -235,8 +272,12 @@
   htmlSearchBar.on("input", (event) => {
     const query = event.target.value.toLowerCase();
 
-    dots.attr("visibility", (d) =>
-      d.name.toLowerCase().includes(query) ? "visible" : "hidden"
-    );
+    dots.attr("visibility", (d) => {
+      // Keep Jia Dawn always visible
+      if (d.name === "Jia, Dawn") return "visible";
+
+      // Filter based on the search query
+      return d.name.toLowerCase().includes(query) ? "visible" : "hidden";
+    });
   });
 })();
