@@ -840,7 +840,7 @@
 
       const svgSupplementary = container
         .append("svg")
-        .attr("width", width)
+        .attr("width", supplementaryWidth)
         .attr("height", containerHeight)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
