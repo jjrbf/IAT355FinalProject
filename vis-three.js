@@ -852,6 +852,8 @@
       "median-line-updated",
       "highlight-label",
       "arrow-shaft",
+      "annotation-text",
+      "annotation-group",
     ]);
 
     const top10PerUniversity = universities.flatMap((uni) => {

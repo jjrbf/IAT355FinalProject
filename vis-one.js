@@ -359,7 +359,7 @@
 
     // Title and footnotes
     document.getElementById("vis1title").innerHTML =
-      "...but pays quite comparably to the other top BC universities";
+      "...but pays quite comparably to the other top BC universities.";
     document.getElementById("vis1small").innerHTML =
       "Median of the 2020/2021 salaries of staff whose salary is over $75,000.";
     document.getElementById("vis1subtitle").innerHTML =
