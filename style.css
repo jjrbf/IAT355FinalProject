@@ -536,8 +536,8 @@ p {
 .vis-container.visualization3 {
   display: flex;
   flex-direction: column;
-  padding: 5rem;
-  height: calc(100vh - 10rem);
+  padding: 3rem;
+  height: calc(100vh - 6rem);
   justify-content: flex-end;
 }
 
@@ -549,17 +549,41 @@ p {
 
 .vis3-vis-container {
   display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
 #vis3Container {
-  width: 70%;
+  width: 100%;
   height: 100%;
 }
 
 #vis3ContainerSupplementary {
-  width: 30%;
+  width: 100%;
   height: 100%;
+}
+
+@media (min-width: 84rem) {
+
+  .vis-container.visualization3 {
+    padding: 5rem;
+    height: calc(100vh - 10rem);
+  }
+
+  .vis3-vis-container {
+    flex-direction: row;
+  }
+  
+  #vis3Container {
+    width: 70%;
+    height: 100%;
+  }
+  
+  #vis3ContainerSupplementary {
+    width: 30%;
+    height: 100%;
+  }
+
 }
 
 #tooltip {
