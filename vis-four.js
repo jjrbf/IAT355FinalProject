@@ -2,7 +2,7 @@
   const config = {
     width: 900,
     height: 500,
-    margin: { top: 20, right: 30, bottom: 20, left: 50 },
+    margin: { top: 20, right: 30, bottom: 20, left: 60 },
     dataPathUniversities: "datasets/bc_universities_2022_23_tuition.csv",
     dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
     svgSelector: "#vis4Container",
