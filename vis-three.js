@@ -2,7 +2,7 @@
   const config = {
     width: 900,
     height: 500,
-    margin: { top: 40, right: 30, bottom: 80, left: 70 },
+    margin: { top: 40, right: 30, bottom: 40, left: 70 },
     dataPathSalaries: "datasets/public_sector_salary-fy20_21-universities.csv",
     svgSelector: "#vis3Container",
   };
@@ -852,6 +852,8 @@
       "median-line-updated",
       "highlight-label",
       "arrow-shaft",
+      "annotation-text",
+      "annotation-group",
     ]);
 
     const top10PerUniversity = universities.flatMap((uni) => {
@@ -1061,7 +1063,7 @@
       );
 
       // Margins
-      const margin = { top: 40, right: 30, bottom: 80, left: 70 };
+      const margin = { top: 40, right: 30, bottom: 40, left: 70 };
       const supplementaryWidth = container.node().getBoundingClientRect().width;
       const supplementaryHeight = container
         .node()

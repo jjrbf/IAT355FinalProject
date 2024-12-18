@@ -104,7 +104,7 @@
     svg.selectAll("*").remove();
 
     // Update scales
-    xScale.domain([0, 600000000]);
+    xScale.domain([0, 700000000]);
 
     drawVerticalGridLines(); // Add vertical grid lines
     // Bars
@@ -257,7 +257,7 @@
     svg.selectAll("*").remove();
 
     // Update scales
-    xScale.domain([0, 120000]);
+    xScale.domain([0, 150000]);
     drawVerticalGridLines(); // Add vertical grid lines
 
     // Bars
@@ -359,7 +359,7 @@
 
     // Title and footnotes
     document.getElementById("vis1title").innerHTML =
-      "...but pays quite comparably to the other top BC universities";
+      "...but pays quite comparably to the other top BC universities.";
     document.getElementById("vis1small").innerHTML =
       "Median of the 2020/2021 salaries of staff whose salary is over $75,000.";
     document.getElementById("vis1subtitle").innerHTML =
