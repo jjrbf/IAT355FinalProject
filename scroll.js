@@ -180,10 +180,14 @@ document.addEventListener("keydown", (event) => {
 
 // Handle button clicks
 document.getElementById("next-step").addEventListener("click", () => {
+  isScrolling = true;
+  changeVis = true;
   scrollToStep(currentStep + 1);
 });
 
 document.getElementById("prev-step").addEventListener("click", () => {
+  isScrolling = true;
+  changeVis = true;
   scrollToStep(currentStep - 1);
 });
 

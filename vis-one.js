@@ -104,7 +104,7 @@
     svg.selectAll("*").remove();
 
     // Update scales
-    xScale.domain([0, 600000000]);
+    xScale.domain([0, 700000000]);
 
     drawVerticalGridLines(); // Add vertical grid lines
     // Bars
@@ -257,7 +257,7 @@
     svg.selectAll("*").remove();
 
     // Update scales
-    xScale.domain([0, 120000]);
+    xScale.domain([0, 150000]);
     drawVerticalGridLines(); // Add vertical grid lines
 
     // Bars
