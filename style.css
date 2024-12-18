@@ -39,15 +39,19 @@ body {
   justify-content: center;
 }
 
-.column-arr {
-  flex: 1;
-  width: 50%;
-}
+@media (min-width: 84rem) {
 
-.right-column-arr {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
+  .column-arr {
+    flex: 1;
+    width: 50%;
+  }
+  
+  .right-column-arr {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+
 }
 
 .darkbg {
@@ -108,8 +112,20 @@ body {
 
 .leftBottomAlign {
   text-align: end;
-  display: flex;
   align-self: flex-end;
+}
+
+.text-only {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (min-width: 84rem) {
+
+  .leftBottomAlign {
+    display: flex;
+  }
+
 }
 
 .vis-container {
